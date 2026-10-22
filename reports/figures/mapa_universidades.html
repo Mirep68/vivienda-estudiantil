@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_15d2e1b9e7b9266ffd24530ab12025db {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_15d2e1b9e7b9266ffd24530ab12025db" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_15d2e1b9e7b9266ffd24530ab12025db = L.map(
+                "map_15d2e1b9e7b9266ffd24530ab12025db",
+                {
+                    center: [6.25, -75.58],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 12,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_980e8add4ee32ccd289f16a8bfd89768 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_980e8add4ee32ccd289f16a8bfd89768.addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var marker_e2441efda19e15f06f6f8f9306ae3b98 = L.marker(
+                [6.26798, -75.568759],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_d5c02bddeb91b97c5db45e510871c20c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f680dd592e4f0b7fe35ed53277a27f99 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_547163151b4a43541b59c3efe1430735 = $(`<div id="html_547163151b4a43541b59c3efe1430735" style="width: 100.0%; height: 100.0%;"><b>Universidad de Antioquia</b><br>Ciudad Universitaria (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_f680dd592e4f0b7fe35ed53277a27f99.setContent(html_547163151b4a43541b59c3efe1430735);
+            
+        
+
+        marker_e2441efda19e15f06f6f8f9306ae3b98.bindPopup(popup_f680dd592e4f0b7fe35ed53277a27f99)
+        ;
+
+        
+    
+    
+            marker_e2441efda19e15f06f6f8f9306ae3b98.bindTooltip(
+                `<div>
+                     UdeA
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_e2441efda19e15f06f6f8f9306ae3b98.setIcon(icon_d5c02bddeb91b97c5db45e510871c20c);
+            
+    
+            var marker_077f150771ae9cd5bd3c33267bd2eaf5 = L.marker(
+                [6.26798, -75.568759],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_8e8a33c2b15b17c24ed28c7053418f6f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6e92e9fec90f987cf43f55a37d591f9d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_70cc1d07af448f2b348a69f5cb349692 = $(`<div id="html_70cc1d07af448f2b348a69f5cb349692" style="width: 100.0%; height: 100.0%;"><b>Universidad de Antioquia</b><br>Área de la Salud (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_6e92e9fec90f987cf43f55a37d591f9d.setContent(html_70cc1d07af448f2b348a69f5cb349692);
+            
+        
+
+        marker_077f150771ae9cd5bd3c33267bd2eaf5.bindPopup(popup_6e92e9fec90f987cf43f55a37d591f9d)
+        ;
+
+        
+    
+    
+            marker_077f150771ae9cd5bd3c33267bd2eaf5.bindTooltip(
+                `<div>
+                     UdeA-Salud
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_077f150771ae9cd5bd3c33267bd2eaf5.setIcon(icon_8e8a33c2b15b17c24ed28c7053418f6f);
+            
+    
+            var marker_4e2a7b8ee8ade2b961f0ab055821a8c4 = L.marker(
+                [6.262958, -75.57717],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_c5e29a3a44b5c900a6d78f80f4dfabea = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ad42d7652c490dcbc961e666e104f9f7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_42156bcbeec3f6358c7a446461c4661b = $(`<div id="html_42156bcbeec3f6358c7a446461c4661b" style="width: 100.0%; height: 100.0%;"><b>Universidad Nacional de Colombia</b><br>El Volador (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_ad42d7652c490dcbc961e666e104f9f7.setContent(html_42156bcbeec3f6358c7a446461c4661b);
+            
+        
+
+        marker_4e2a7b8ee8ade2b961f0ab055821a8c4.bindPopup(popup_ad42d7652c490dcbc961e666e104f9f7)
+        ;
+
+        
+    
+    
+            marker_4e2a7b8ee8ade2b961f0ab055821a8c4.bindTooltip(
+                `<div>
+                     UNAL
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4e2a7b8ee8ade2b961f0ab055821a8c4.setIcon(icon_c5e29a3a44b5c900a6d78f80f4dfabea);
+            
+    
+            var marker_4a11f1ef50dcf9ccf1c83f4df9482a62 = L.marker(
+                [6.273423, -75.592435],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_325fe53aea353545fa857cf495d0eecd = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dc855b977a62fe6ce771ee524c137c8c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f20fdd735ac8a0609c7007276becaac7 = $(`<div id="html_f20fdd735ac8a0609c7007276becaac7" style="width: 100.0%; height: 100.0%;"><b>Universidad Nacional de Colombia</b><br>Facultad de Minas (Robledo) (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_dc855b977a62fe6ce771ee524c137c8c.setContent(html_f20fdd735ac8a0609c7007276becaac7);
+            
+        
+
+        marker_4a11f1ef50dcf9ccf1c83f4df9482a62.bindPopup(popup_dc855b977a62fe6ce771ee524c137c8c)
+        ;
+
+        
+    
+    
+            marker_4a11f1ef50dcf9ccf1c83f4df9482a62.bindTooltip(
+                `<div>
+                     UNAL-Minas
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_4a11f1ef50dcf9ccf1c83f4df9482a62.setIcon(icon_325fe53aea353545fa857cf495d0eecd);
+            
+    
+            var marker_82ac3690a26522627024bebe31e0c0cc = L.marker(
+                [6.274526, -75.587165],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_fe6c01e3ab1747ec59d2fb5cdec9ce6e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0e2ef137897397453d834b618dba3684 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fac593c22185354559374e65323e6851 = $(`<div id="html_fac593c22185354559374e65323e6851" style="width: 100.0%; height: 100.0%;"><b>Institución Universitaria Pascual Bravo</b><br>Robledo (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_0e2ef137897397453d834b618dba3684.setContent(html_fac593c22185354559374e65323e6851);
+            
+        
+
+        marker_82ac3690a26522627024bebe31e0c0cc.bindPopup(popup_0e2ef137897397453d834b618dba3684)
+        ;
+
+        
+    
+    
+            marker_82ac3690a26522627024bebe31e0c0cc.bindTooltip(
+                `<div>
+                     PascualBravo
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_82ac3690a26522627024bebe31e0c0cc.setIcon(icon_fe6c01e3ab1747ec59d2fb5cdec9ce6e);
+            
+    
+            var marker_3675779a63322cd2f6277753f2c69f6d = L.marker(
+                [6.249582, -75.560921],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_d1ed9f296cc2bf93c46200c60aa1823d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3e8d95aa48479ddd4fc22ee30b34980e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9acd89ee2e3685cedd5dc512ae47aec6 = $(`<div id="html_9acd89ee2e3685cedd5dc512ae47aec6" style="width: 100.0%; height: 100.0%;"><b>Institución Universitaria Colegio Mayor de Antioquia</b><br>Robledo (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_3e8d95aa48479ddd4fc22ee30b34980e.setContent(html_9acd89ee2e3685cedd5dc512ae47aec6);
+            
+        
+
+        marker_3675779a63322cd2f6277753f2c69f6d.bindPopup(popup_3e8d95aa48479ddd4fc22ee30b34980e)
+        ;
+
+        
+    
+    
+            marker_3675779a63322cd2f6277753f2c69f6d.bindTooltip(
+                `<div>
+                     ColMayor
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_3675779a63322cd2f6277753f2c69f6d.setIcon(icon_d1ed9f296cc2bf93c46200c60aa1823d);
+            
+    
+            var marker_0466455c619a41a3206eb60421a0dac3 = L.marker(
+                [6.280278, -75.582804],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_c292d285b210617894069bfd2a7f5445 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6338d845197bf18be848b2170f054f69 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9a5ea708eb47086973eb83a080f70433 = $(`<div id="html_9a5ea708eb47086973eb83a080f70433" style="width: 100.0%; height: 100.0%;"><b>Tecnológico de Antioquia</b><br>Robledo (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_6338d845197bf18be848b2170f054f69.setContent(html_9a5ea708eb47086973eb83a080f70433);
+            
+        
+
+        marker_0466455c619a41a3206eb60421a0dac3.bindPopup(popup_6338d845197bf18be848b2170f054f69)
+        ;
+
+        
+    
+    
+            marker_0466455c619a41a3206eb60421a0dac3.bindTooltip(
+                `<div>
+                     TdeA
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0466455c619a41a3206eb60421a0dac3.setIcon(icon_c292d285b210617894069bfd2a7f5445);
+            
+    
+            var marker_ef3690044f7d788c34a90924f245f784 = L.marker(
+                [6.160751, -75.581257],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_767deb38f58ecaee719ee30e1d1de302 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_cf2f1907662bd41dcd270ec27fafdd21 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3bcf3d02d7766804e46caf425433e7b3 = $(`<div id="html_3bcf3d02d7766804e46caf425433e7b3" style="width: 100.0%; height: 100.0%;"><b>Institución Universitaria de Envigado</b><br>Envigado (Envigado)<br>fuente: nominatim</div>`)[0];
+                popup_cf2f1907662bd41dcd270ec27fafdd21.setContent(html_3bcf3d02d7766804e46caf425433e7b3);
+            
+        
+
+        marker_ef3690044f7d788c34a90924f245f784.bindPopup(popup_cf2f1907662bd41dcd270ec27fafdd21)
+        ;
+
+        
+    
+    
+            marker_ef3690044f7d788c34a90924f245f784.bindTooltip(
+                `<div>
+                     IUE
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ef3690044f7d788c34a90924f245f784.setIcon(icon_767deb38f58ecaee719ee30e1d1de302);
+            
+    
+            var marker_f831070e5f9e0dbee404fc3f85183413 = L.marker(
+                [6.200202, -75.578485],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_f6acf534b6027a148155d342285115a3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e63d7eea1723c712d548bccf5cd5ec12 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ab160cf672099e0f442314472748e85e = $(`<div id="html_ab160cf672099e0f442314472748e85e" style="width: 100.0%; height: 100.0%;"><b>Universidad EAFIT</b><br>Las Vegas (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_e63d7eea1723c712d548bccf5cd5ec12.setContent(html_ab160cf672099e0f442314472748e85e);
+            
+        
+
+        marker_f831070e5f9e0dbee404fc3f85183413.bindPopup(popup_e63d7eea1723c712d548bccf5cd5ec12)
+        ;
+
+        
+    
+    
+            marker_f831070e5f9e0dbee404fc3f85183413.bindTooltip(
+                `<div>
+                     EAFIT
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_f831070e5f9e0dbee404fc3f85183413.setIcon(icon_f6acf534b6027a148155d342285115a3);
+            
+    
+            var marker_6924576afd6f5564096e237920c78126 = L.marker(
+                [6.241944, -75.589529],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_c17d20fc173674583823b8a991d39280 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1159e5158dc2a17940f32ef4ffe470a5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ef5a729bb7b1811bec6d4e763e174c07 = $(`<div id="html_ef5a729bb7b1811bec6d4e763e174c07" style="width: 100.0%; height: 100.0%;"><b>Universidad Pontificia Bolivariana</b><br>Laureles (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_1159e5158dc2a17940f32ef4ffe470a5.setContent(html_ef5a729bb7b1811bec6d4e763e174c07);
+            
+        
+
+        marker_6924576afd6f5564096e237920c78126.bindPopup(popup_1159e5158dc2a17940f32ef4ffe470a5)
+        ;
+
+        
+    
+    
+            marker_6924576afd6f5564096e237920c78126.bindTooltip(
+                `<div>
+                     UPB
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_6924576afd6f5564096e237920c78126.setIcon(icon_c17d20fc173674583823b8a991d39280);
+            
+    
+            var marker_afb3c59745258fd8ec62c46a2a4c7f66 = L.marker(
+                [6.254614, -75.573007],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_936699585f91bb165cdfb7cc353b6d08 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f5b8b7d3aa5f493c87e6ffebef29d41e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_810a74b0b438c4e6662218fffa906034 = $(`<div id="html_810a74b0b438c4e6662218fffa906034" style="width: 100.0%; height: 100.0%;"><b>Universidad de San Buenaventura</b><br>San Benito (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_f5b8b7d3aa5f493c87e6ffebef29d41e.setContent(html_810a74b0b438c4e6662218fffa906034);
+            
+        
+
+        marker_afb3c59745258fd8ec62c46a2a4c7f66.bindPopup(popup_f5b8b7d3aa5f493c87e6ffebef29d41e)
+        ;
+
+        
+    
+    
+            marker_afb3c59745258fd8ec62c46a2a4c7f66.bindTooltip(
+                `<div>
+                     USB
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_afb3c59745258fd8ec62c46a2a4c7f66.setIcon(icon_936699585f91bb165cdfb7cc353b6d08);
+            
+    
+            var marker_aacffcae86b6428788e73a3a734e4c1f = L.marker(
+                [6.23101, -75.611401],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_2b331c9764edc70540691bd06291ca70 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e3899ac165dfb0554183e618422453ca = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ae915720909563aa2be1b7b737464269 = $(`<div id="html_ae915720909563aa2be1b7b737464269" style="width: 100.0%; height: 100.0%;"><b>Universidad de Medellín</b><br>Belén Los Alpes (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_e3899ac165dfb0554183e618422453ca.setContent(html_ae915720909563aa2be1b7b737464269);
+            
+        
+
+        marker_aacffcae86b6428788e73a3a734e4c1f.bindPopup(popup_e3899ac165dfb0554183e618422453ca)
+        ;
+
+        
+    
+    
+            marker_aacffcae86b6428788e73a3a734e4c1f.bindTooltip(
+                `<div>
+                     UdeM
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_aacffcae86b6428788e73a3a734e4c1f.setIcon(icon_2b331c9764edc70540691bd06291ca70);
+            
+    
+            var marker_86dcd79dd85d5d5e9cea2eb56ee819f8 = L.marker(
+                [6.208547, -75.552845],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_4d1e1b735ff54ff44dc10e3eab725ca4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e6f7f3b86fe04763e6e601112df9fbb6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cd7d6ebeec45f6bb228c99b88ad6d179 = $(`<div id="html_cd7d6ebeec45f6bb228c99b88ad6d179" style="width: 100.0%; height: 100.0%;"><b>Universidad CES</b><br>El Poblado (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_e6f7f3b86fe04763e6e601112df9fbb6.setContent(html_cd7d6ebeec45f6bb228c99b88ad6d179);
+            
+        
+
+        marker_86dcd79dd85d5d5e9cea2eb56ee819f8.bindPopup(popup_e6f7f3b86fe04763e6e601112df9fbb6)
+        ;
+
+        
+    
+    
+            marker_86dcd79dd85d5d5e9cea2eb56ee819f8.bindTooltip(
+                `<div>
+                     CES
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_86dcd79dd85d5d5e9cea2eb56ee819f8.setIcon(icon_4d1e1b735ff54ff44dc10e3eab725ca4);
+            
+    
+            var marker_af702e438234de04a0e31d2dd6fec7c7 = L.marker(
+                [6.259077, -75.58379],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_25ffbcda7c17f0b5ae7426892115b035 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_989755d05467d423180988fe9b7a515f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_643548bef66020ecbd9684538325eb2b = $(`<div id="html_643548bef66020ecbd9684538325eb2b" style="width: 100.0%; height: 100.0%;"><b>Universidad Católica Luis Amigó</b><br>Floresta (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_989755d05467d423180988fe9b7a515f.setContent(html_643548bef66020ecbd9684538325eb2b);
+            
+        
+
+        marker_af702e438234de04a0e31d2dd6fec7c7.bindPopup(popup_989755d05467d423180988fe9b7a515f)
+        ;
+
+        
+    
+    
+            marker_af702e438234de04a0e31d2dd6fec7c7.bindTooltip(
+                `<div>
+                     UCLuisAmigo
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_af702e438234de04a0e31d2dd6fec7c7.setIcon(icon_25ffbcda7c17f0b5ae7426892115b035);
+            
+    
+            var marker_896f9e5ef7eb8b1c04680a9f3ee5d1e0 = L.marker(
+                [6.246607, -75.561044],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_c1f80e85e905598683fe930c2550beb3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_10643d79b59576fc7fca737b60219b27 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d0b4036271b77e7271d7d65916512753 = $(`<div id="html_d0b4036271b77e7271d7d65916512753" style="width: 100.0%; height: 100.0%;"><b>Universidad Cooperativa de Colombia</b><br>Medellín (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_10643d79b59576fc7fca737b60219b27.setContent(html_d0b4036271b77e7271d7d65916512753);
+            
+        
+
+        marker_896f9e5ef7eb8b1c04680a9f3ee5d1e0.bindPopup(popup_10643d79b59576fc7fca737b60219b27)
+        ;
+
+        
+    
+    
+            marker_896f9e5ef7eb8b1c04680a9f3ee5d1e0.bindTooltip(
+                `<div>
+                     UCC
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_896f9e5ef7eb8b1c04680a9f3ee5d1e0.setIcon(icon_c1f80e85e905598683fe930c2550beb3);
+            
+    
+            var marker_c9cf28cb50ae6f7a54bccd6d41aa8a1a = L.marker(
+                [6.25097, -75.572795],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_d3a36a1e0a29a7956fd672b1f398ca19 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0647e7683f1150b5e126e0f5354ae810 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0ff794c70150e28f6554342c29443301 = $(`<div id="html_0ff794c70150e28f6554342c29443301" style="width: 100.0%; height: 100.0%;"><b>Universidad Autónoma Latinoamericana</b><br>Centro (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_0647e7683f1150b5e126e0f5354ae810.setContent(html_0ff794c70150e28f6554342c29443301);
+            
+        
+
+        marker_c9cf28cb50ae6f7a54bccd6d41aa8a1a.bindPopup(popup_0647e7683f1150b5e126e0f5354ae810)
+        ;
+
+        
+    
+    
+            marker_c9cf28cb50ae6f7a54bccd6d41aa8a1a.bindTooltip(
+                `<div>
+                     UNAULA
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_c9cf28cb50ae6f7a54bccd6d41aa8a1a.setIcon(icon_d3a36a1e0a29a7956fd672b1f398ca19);
+            
+    
+            var marker_62fc179614477c4a23e12c6c7fe5e3c0 = L.marker(
+                [6.27772, -75.590709],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_e1be19d7b6be421793909f915872068c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0ac428419d2e068147e910d63b231256 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2dc7fe2047a93041ab0596aef098664c = $(`<div id="html_2dc7fe2047a93041ab0596aef098664c" style="width: 100.0%; height: 100.0%;"><b>Institución Universitaria Esumer</b><br>Belén (Medellín)<br>fuente: nominatim</div>`)[0];
+                popup_0ac428419d2e068147e910d63b231256.setContent(html_2dc7fe2047a93041ab0596aef098664c);
+            
+        
+
+        marker_62fc179614477c4a23e12c6c7fe5e3c0.bindPopup(popup_0ac428419d2e068147e910d63b231256)
+        ;
+
+        
+    
+    
+            marker_62fc179614477c4a23e12c6c7fe5e3c0.bindTooltip(
+                `<div>
+                     ESUMER
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_62fc179614477c4a23e12c6c7fe5e3c0.setIcon(icon_e1be19d7b6be421793909f915872068c);
+            
+    
+            var marker_95d2eda79c62ccdf5fd25ec2f37b3ba9 = L.marker(
+                [6.15696, -75.516855],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_ef0e3b75f421f99af612dd481a39ed0a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_10850f5873440406feabb81ccc127dad = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_edda7998bd8daaf368aa4e81f5b03860 = $(`<div id="html_edda7998bd8daaf368aa4e81f5b03860" style="width: 100.0%; height: 100.0%;"><b>Universidad EIA</b><br>Las Palmas (Envigado)<br>fuente: nominatim</div>`)[0];
+                popup_10850f5873440406feabb81ccc127dad.setContent(html_edda7998bd8daaf368aa4e81f5b03860);
+            
+        
+
+        marker_95d2eda79c62ccdf5fd25ec2f37b3ba9.bindPopup(popup_10850f5873440406feabb81ccc127dad)
+        ;
+
+        
+    
+    
+            marker_95d2eda79c62ccdf5fd25ec2f37b3ba9.bindTooltip(
+                `<div>
+                     EIA
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_95d2eda79c62ccdf5fd25ec2f37b3ba9.setIcon(icon_ef0e3b75f421f99af612dd481a39ed0a);
+            
+    
+            var marker_0c705f9c435a6852b9443cf0678830b0 = L.marker(
+                [6.144991, -75.619745],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_114f561069de2a335c526b4e263b7fb1 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9e55bd9d0573145879b137aa88fb7dc5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_7b0f5eed083715301590e6a1414e8d46 = $(`<div id="html_7b0f5eed083715301590e6a1414e8d46" style="width: 100.0%; height: 100.0%;"><b>Fundación Universitaria CEIPA</b><br>Sabaneta (Sabaneta)<br>fuente: nominatim</div>`)[0];
+                popup_9e55bd9d0573145879b137aa88fb7dc5.setContent(html_7b0f5eed083715301590e6a1414e8d46);
+            
+        
+
+        marker_0c705f9c435a6852b9443cf0678830b0.bindPopup(popup_9e55bd9d0573145879b137aa88fb7dc5)
+        ;
+
+        
+    
+    
+            marker_0c705f9c435a6852b9443cf0678830b0.bindTooltip(
+                `<div>
+                     CEIPA
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_0c705f9c435a6852b9443cf0678830b0.setIcon(icon_114f561069de2a335c526b4e263b7fb1);
+            
+    
+            var marker_ddd184dbde042a869cd307c691be59ae = L.marker(
+                [6.099672, -75.638487],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_ae59932c885e8da822df32d368565bbc = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_adcad2c4e7b88abe8d1185dbbddec83e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_ee7cd005bdcc6108df289086576093c2 = $(`<div id="html_ee7cd005bdcc6108df289086576093c2" style="width: 100.0%; height: 100.0%;"><b>Corporación Universitaria Lasallista (Unilasallista)</b><br>Caldas (Caldas)<br>fuente: nominatim</div>`)[0];
+                popup_adcad2c4e7b88abe8d1185dbbddec83e.setContent(html_ee7cd005bdcc6108df289086576093c2);
+            
+        
+
+        marker_ddd184dbde042a869cd307c691be59ae.bindPopup(popup_adcad2c4e7b88abe8d1185dbbddec83e)
+        ;
+
+        
+    
+    
+            marker_ddd184dbde042a869cd307c691be59ae.bindTooltip(
+                `<div>
+                     Unilasallista
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_ddd184dbde042a869cd307c691be59ae.setIcon(icon_ae59932c885e8da822df32d368565bbc);
+            
+    
+            var marker_138cd908f32ef902b2107c2ae69b8fd8 = L.marker(
+                [6.311234, -75.554832],
+                {
+}
+            ).addTo(map_15d2e1b9e7b9266ffd24530ab12025db);
+        
+    
+            var icon_057d82ebc9188eb61375b5e0d397f2c9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "graduation-cap",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c4a959a60516a4e8dab5d623a828da86 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5f45364a03a41cdb323346094329ef4a = $(`<div id="html_5f45364a03a41cdb323346094329ef4a" style="width: 100.0%; height: 100.0%;"><b>Corporación Universitaria Minuto de Dios</b><br>Bello (Bello)<br>fuente: nominatim</div>`)[0];
+                popup_c4a959a60516a4e8dab5d623a828da86.setContent(html_5f45364a03a41cdb323346094329ef4a);
+            
+        
+
+        marker_138cd908f32ef902b2107c2ae69b8fd8.bindPopup(popup_c4a959a60516a4e8dab5d623a828da86)
+        ;
+
+        
+    
+    
+            marker_138cd908f32ef902b2107c2ae69b8fd8.bindTooltip(
+                `<div>
+                     Uniminuto
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+                marker_138cd908f32ef902b2107c2ae69b8fd8.setIcon(icon_057d82ebc9188eb61375b5e0d397f2c9);
+            
+</script>
+</html>

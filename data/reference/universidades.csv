@@ -1,0 +1,26 @@
+id,sigla,nombre,sede,municipio,tipo,consulta,lat,lon,fuente_coord
+1,UdeA,Universidad de Antioquia,Ciudad Universitaria,Medellín,Pública,"Ciudad Universitaria, Universidad de Antioquia, Medellín",6.26798,-75.568759,nominatim
+2,UdeA-Salud,Universidad de Antioquia,Área de la Salud,Medellín,Pública,"Facultad de Medicina, Universidad de Antioquia, Medellín",6.26798,-75.568759,nominatim
+3,UNAL,Universidad Nacional de Colombia,El Volador,Medellín,Pública,"Universidad Nacional de Colombia, Medellín",6.262958,-75.57717,nominatim
+4,UNAL-Minas,Universidad Nacional de Colombia,Facultad de Minas (Robledo),Medellín,Pública,"Facultad de Minas, Medellín",6.273423,-75.592435,nominatim
+5,ITM,Instituto Tecnológico Metropolitano,Robledo,Medellín,Pública,"Instituto Tecnológico Metropolitano, Robledo, Medellín",,,no_encontrado
+6,ITM-Fraternidad,Instituto Tecnológico Metropolitano,Fraternidad,Medellín,Pública,"Instituto Tecnológico Metropolitano Fraternidad, Medellín",,,no_encontrado
+7,PascualBravo,Institución Universitaria Pascual Bravo,Robledo,Medellín,Pública,"Institución Universitaria Pascual Bravo, Medellín",6.274526,-75.587165,nominatim
+8,PoliJIC,Politécnico Colombiano Jaime Isaza Cadavid,El Poblado,Medellín,Pública,"Politécnico Colombiano Jaime Isaza Cadavid, Medellín",,,no_encontrado
+9,ColMayor,Institución Universitaria Colegio Mayor de Antioquia,Robledo,Medellín,Pública,"Colegio Mayor de Antioquia, Medellín",6.249582,-75.560921,nominatim
+10,TdeA,Tecnológico de Antioquia,Robledo,Medellín,Pública,"Tecnológico de Antioquia, Medellín",6.280278,-75.582804,nominatim
+11,IUE,Institución Universitaria de Envigado,Envigado,Envigado,Pública,"Institución Universitaria de Envigado, Envigado",6.160751,-75.581257,nominatim
+12,EAFIT,Universidad EAFIT,Las Vegas,Medellín,Privada,"Universidad EAFIT, Medellín",6.200202,-75.578485,nominatim
+13,UPB,Universidad Pontificia Bolivariana,Laureles,Medellín,Privada,"Universidad Pontificia Bolivariana, Medellín",6.241944,-75.589529,nominatim
+14,USB,Universidad de San Buenaventura,San Benito,Medellín,Privada,"Universidad de San Buenaventura, Medellín",6.254614,-75.573007,nominatim
+15,USB-Bello,Universidad de San Buenaventura,Campus Bello,Bello,Privada,"Universidad de San Buenaventura, Bello",,,no_encontrado
+16,UdeM,Universidad de Medellín,Belén Los Alpes,Medellín,Privada,"Universidad de Medellín, Medellín",6.23101,-75.611401,nominatim
+17,CES,Universidad CES,El Poblado,Medellín,Privada,"Universidad CES, Medellín",6.208547,-75.552845,nominatim
+18,UCLuisAmigo,Universidad Católica Luis Amigó,Floresta,Medellín,Privada,"Universidad Católica Luis Amigó, Medellín",6.259077,-75.58379,nominatim
+19,UCC,Universidad Cooperativa de Colombia,Medellín,Medellín,Privada,"Universidad Cooperativa de Colombia, Medellín",6.246607,-75.561044,nominatim
+20,UNAULA,Universidad Autónoma Latinoamericana,Centro,Medellín,Privada,"Universidad Autónoma Latinoamericana, Medellín",6.25097,-75.572795,nominatim
+21,ESUMER,Institución Universitaria Esumer,Belén,Medellín,Privada,"Institución Universitaria Esumer, Medellín",6.27772,-75.590709,nominatim
+22,EIA,Universidad EIA,Las Palmas,Envigado,Privada,"Universidad EIA, Envigado",6.15696,-75.516855,nominatim
+23,CEIPA,Fundación Universitaria CEIPA,Sabaneta,Sabaneta,Privada,"CEIPA, Sabaneta",6.144991,-75.619745,nominatim
+24,Unilasallista,Corporación Universitaria Lasallista (Unilasallista),Caldas,Caldas,Privada,"Corporación Universitaria Lasallista, Caldas, Antioquia",6.099672,-75.638487,nominatim
+25,Uniminuto,Corporación Universitaria Minuto de Dios,Bello,Bello,Privada,"Corporación Universitaria Minuto de Dios, Bello",6.311234,-75.554832,nominatim

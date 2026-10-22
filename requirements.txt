@@ -1,0 +1,13 @@
+# --- Fase 1: scraping, datos y gráficas ---
+requests          # descargar páginas web
+beautifulsoup4    # recorrer el HTML
+lxml              # parser de HTML rápido (lo usa BeautifulSoup)
+pandas            # tablas de datos
+numpy             # cálculo numérico
+matplotlib        # gráficas base
+seaborn           # gráficas estadísticas
+geopy             # geocodificación y distancias
+folium            # mapas interactivos
+tqdm              # barras de progreso
+python-dotenv     # configuración secreta en archivo .env
+# Las librerías de deep learning (PyTorch), base de datos y API se agregan en su fase.

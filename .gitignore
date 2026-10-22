@@ -1,0 +1,23 @@
+# Entorno virtual y cachés de Python
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Secretos (contraseñas, llaves de API)
+.env
+
+# Datos crudos y pesados: no se suben a GitHub
+data/raw/*
+data/interim/*
+!data/raw/.gitkeep
+!data/interim/.gitkeep
+
+# Modelos entrenados (pesan mucho)
+models/*.pt
+models/*.pkl
+
+# VS Code / Windows
+.vscode/*
+!.vscode/settings.json
+Thumbs.db
