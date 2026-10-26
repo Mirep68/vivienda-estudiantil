@@ -11,4 +11,7 @@ folium            # mapas interactivos
 tqdm              # barras de progreso
 python-dotenv     # configuración secreta en archivo .env
 ipykernel         # permite ejecutar notebooks de Jupyter en VS Code con este entorno
+geopandas         # pandas con geometría: polígonos, puntos, cruces espaciales
+osmnx             # descargar datos de OpenStreetMap (límites, estaciones, parques)
+openpyxl          # leer archivos de Excel (.xlsx) con pandas
 # Las librerías de deep learning (PyTorch), base de datos y API se agregan en su fase.

@@ -1,0 +1,31 @@
+﻿,hurto_personas,hurto_residencias,hurto_motos,hurto_carros,unidad_tipo,nombre,indice_seguridad
+municipio:Barbosa,181.8,42.08,65.89,13.5,municipio,Barbosa,76.7
+municipio:Bello,376.07,28.03,123.74,33.55,municipio,Bello,58.3
+municipio:Caldas,334.3,45.1,57.5,20.86,municipio,Caldas,65.0
+municipio:Copacabana,354.71,69.83,146.32,40.46,municipio,Copacabana,38.3
+municipio:Envigado,505.84,64.37,39.23,18.47,municipio,Envigado,60.8
+municipio:Girardota,326.11,58.18,96.69,22.12,municipio,Girardota,55.8
+municipio:Itagüí,454.5,46.16,81.27,23.24,municipio,Itagüí,53.3
+municipio:La Estrella,386.63,48.48,63.02,18.79,municipio,La Estrella,61.7
+municipio:Sabaneta,530.85,71.76,56.08,26.61,municipio,Sabaneta,48.3
+comuna:1,174.92,26.27,136.07,6.39,comuna,Popular,81.7
+comuna:2,185.7,15.78,134.23,9.15,comuna,Santa Cruz,80.8
+comuna:3,249.27,29.46,211.86,16.57,comuna,Manrique,64.2
+comuna:4,956.8,40.27,414.82,61.8,comuna,Aranjuez,25.8
+comuna:5,1124.69,38.1,356.82,72.47,comuna,Castilla,24.2
+comuna:6,229.34,18.56,168.96,19.28,comuna,Doce de Octubre,67.5
+comuna:7,567.32,46.15,260.21,30.3,comuna,Robledo,34.2
+comuna:8,388.54,32.61,232.73,30.35,comuna,Villa Hermosa,45.8
+comuna:9,566.45,50.53,356.07,48.64,comuna,Buenos Aires,26.7
+comuna:10,8505.8,133.33,743.08,112.52,comuna,La Candelaria,3.3
+comuna:11,3269.91,263.7,234.92,150.58,comuna,Laureles Estadio,6.7
+comuna:12,1232.49,135.86,256.68,73.41,comuna,La América,12.5
+comuna:13,262.75,28.96,141.78,20.03,comuna,San Javier,65.0
+comuna:14,2894.98,191.74,70.17,24.8,comuna,El Poblado,34.2
+comuna:15,1687.48,68.92,261.41,76.23,comuna,Guayabal,14.2
+comuna:16,1000.85,99.51,165.72,39.12,comuna,Belén,27.5
+comuna:50,180.63,20.47,45.65,53.43,comuna,San Sebastián de Palmitas,74.2
+comuna:60,210.99,35.92,166.24,26.18,comuna,San Cristóbal,58.3
+comuna:70,226.23,37.05,69.52,8.95,comuna,Altavista,77.5
+comuna:80,149.7,30.07,120.31,15.48,comuna,San Antonio de Prado,79.2
+comuna:90,823.48,104.1,131.83,63.33,comuna,Santa Elena,28.3
