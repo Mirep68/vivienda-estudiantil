@@ -10,4 +10,5 @@ geopy             # geocodificación y distancias
 folium            # mapas interactivos
 tqdm              # barras de progreso
 python-dotenv     # configuración secreta en archivo .env
+ipykernel         # permite ejecutar notebooks de Jupyter en VS Code con este entorno
 # Las librerías de deep learning (PyTorch), base de datos y API se agregan en su fase.

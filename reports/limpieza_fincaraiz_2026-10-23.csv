@@ -1,0 +1,15 @@
+﻿regla,descripcion,accion,afectados
+1,Municipio fuera del Valle de Aburrá,eliminar fila,40
+2,"Precio fuera de $300,000 - $100,000,000",eliminar fila,22
+3,Nombre de municipio normalizado,corregir,1434
+4,Área fuera de 15-1000 m²,faltante (area_m2),371
+5,"Precio por m² fuera de $10,000 - $200,000",eliminar fila,64
+6,"Habitaciones <0, >10, o 0 sin ser apartaestudio",faltante (habitaciones),287
+7,Baños 0 o >10,faltante (banos),193
+8,Parqueaderos <0 o >10 (el 0 es real y se conserva),faltante (parqueaderos),46
+9,"Piso 0 (no informado), negativo o >45",faltante (piso),18032
+10,Estrato fuera de 1-6,faltante (estrato),294
+11,Estrato 1 (valor de relleno del portal),faltante (estrato),34
+12,"Estrato faltante estimado con la moda del barrio (>=5 anuncios, sin barrios genéricos)",imputar (estrato),269
+13,Se eliminan 'administracion' y 'precio_con_admin' (98 % sin informar),eliminar columna,2
+14,Coordenadas fuera del Valle de Aburrá,"faltante (lat, lon)",36
