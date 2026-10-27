@@ -15,3 +15,11 @@ geopandas         # pandas con geometría: polígonos, puntos, cruces espaciales
 osmnx             # descargar datos de OpenStreetMap (límites, estaciones, parques)
 openpyxl          # leer archivos de Excel (.xlsx) con pandas
 # Las librerías de deep learning (PyTorch), base de datos y API se agregan en su fase.
+# --- Fase 3: modelos ---
+# torch: instalar con el índice de CUDA (RTX 50xx necesita CUDA >= 12.8):
+#   pip install torch --index-url https://download.pytorch.org/whl/cu132
+scikit-learn      # división de datos y métricas
+xgboost           # modelo de comparación (gradient boosting)
+# --- Fase 4: base de datos ---
+sqlalchemy        # puente entre Python/pandas y motores SQL
+psycopg[binary]   # driver de PostgreSQL (versión 3)

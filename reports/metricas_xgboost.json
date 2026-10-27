@@ -1,0 +1,37 @@
+{
+ "xgboost": {
+  "RMSE_log": 0.2093762136338087,
+  "R2_log": 0.8832389119790013,
+  "MAE_pesos": 1001803.244609511,
+  "MAPE_%": 14.78850391982525,
+  "MdAPE_%": 10.616285705418102,
+  "dentro_10_%": 47.791164658634536,
+  "dentro_20_%": 74.63186077643908
+ },
+ "linea_base": {
+  "RMSE_log": 0.3838428093165868,
+  "R2_log": 0.6075807818448167,
+  "MAE_pesos": 1820487.844208433,
+  "MAPE_%": 27.45381306267745,
+  "MdAPE_%": 20.61775645363105,
+  "dentro_10_%": 26.08210620258813,
+  "dentro_20_%": 48.505131637661755
+ },
+ "mejor_iteracion": 806,
+ "parametros": {
+  "n_estimators": 5000,
+  "learning_rate": 0.03,
+  "max_depth": 8,
+  "min_child_weight": 3,
+  "subsample": 0.8,
+  "colsample_bytree": 0.8,
+  "reg_lambda": 1.0,
+  "tree_method": "hist",
+  "device": "cuda",
+  "enable_categorical": true,
+  "max_cat_to_onehot": 1,
+  "early_stopping_rounds": 200,
+  "eval_metric": "rmse",
+  "random_state": 42
+ }
+}
