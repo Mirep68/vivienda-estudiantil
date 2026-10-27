@@ -47,7 +47,14 @@ def descargar(anio: int, url: str) -> Path:
     return destino
 
 
-def leer(ruta: Path) -> pd.DataFrame:
+def leer(anio: int, url: str) -> pd.DataFrame:
+    """Lee el Excel de la Policía. La primera vez guarda una copia SOLO de Antioquia en CSV
+    (leer un Excel de 40 MB tarda minutos; el CSV filtrado, segundos)."""
+    cache = RAW / f"policia_delitos_{anio}_antioquia.csv"
+    if cache.exists():
+        print(f"  Usando copia filtrada {cache.name}")
+        return pd.read_csv(cache, dtype=str, encoding="utf-8-sig")
+    ruta = descargar(anio, url)
     hoja = pd.ExcelFile(ruta).sheet_names
     print(f"  Hojas: {hoja}")
     crudo = pd.read_excel(ruta, sheet_name=hoja[0], header=None, nrows=30)
@@ -55,19 +62,26 @@ def leer(ruta: Path) -> pd.DataFrame:
                 if any("municipio" in sin_tildes(v) for v in f.dropna().astype(str)))
     df = pd.read_excel(ruta, sheet_name=hoja[0], header=fila, dtype=str)
     print(f"  Encabezado en fila {fila} | filas: {len(df):,} | columnas: {list(df.columns)}")
+    col_dep = next(c for c in df.columns if "departamento" in sin_tildes(c))
+    df = df[df[col_dep].astype(str).str.upper().str.contains("ANTIOQUIA")]
+    df.to_csv(cache, index=False, encoding="utf-8-sig")
+    print(f"  Copia de Antioquia guardada: {cache.name} ({len(df):,} filas)")
     return df
+
+
+def codigo5(serie: pd.Series) -> pd.Series:
+    """Normaliza el código DANE a 5 dígitos (departamento + municipio), venga como venga:
+       '5001' / '05001' -> '05001'   |   '5001000' / '05001000' / '5001000.0' -> '05001'"""
+    s = serie.astype(str).str.strip().str.replace(r"\.0$", "", regex=True).str.replace(r"\D", "", regex=True)
+    return s.where(s.str.len() > 5, s.str.zfill(5)).where(s.str.len() <= 5, s.str.zfill(8).str[:5])
 
 
 def detectar(df: pd.DataFrame) -> dict:
     cols = {c: sin_tildes(c) for c in df.columns}
     def busca(*palabras):
         return next((c for c, n in cols.items() if all(p in n for p in palabras)), None)
-    codigo = next((c for c in df.columns
-                   if df[c].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(8).str[:5].eq("05001").any()), None)
-    delito = busca("delito") or next((c for c in df.columns
-                                      if df[c].astype(str).str.upper().str.contains("HOMICIDIO").any()), None)
-    return {"codigo": codigo, "delito": delito, "municipio": busca("municipio"),
-            "fecha": busca("fecha"), "cantidad": busca("cantidad")}
+    return {"codigo": busca("codigo", "dane") or busca("codigo"), "delito": busca("delito"),
+            "municipio": busca("municipio"), "fecha": busca("fecha"), "cantidad": busca("cantidad")}
 
 
 def main() -> None:
@@ -75,7 +89,7 @@ def main() -> None:
     for anio, url in ARCHIVOS.items():
         print(f"\n=== {anio} ===")
         try:
-            df = leer(descargar(anio, url))
+            df = leer(anio, url)
         except Exception as e:
             print(f"  ERROR: {e.__class__.__name__}: {e}")
             continue
@@ -86,7 +100,10 @@ def main() -> None:
             print("  No pude detectar el código DANE o el delito. Pégame la lista de columnas.")
             continue
 
-        cod5 = df[c["codigo"]].astype(str).str.replace(r"\.0$", "", regex=True).str.zfill(8).str[:5]
+        print(f"  Ejemplos de '{c['codigo']}' tal como viene: {df[c['codigo']].dropna().unique()[:5].tolist()}")
+        cod5 = codigo5(df[c["codigo"]])
+        med = df.loc[cod5 == "05001", c["municipio"]].unique()[:3] if c["municipio"] else []
+        print(f"  Código 05001 corresponde a: {list(med)}  (debe ser Medellín)")
         es_hom = df[c["delito"]].astype(str).str.upper().str.contains("HOMICIDIO")
         hom = df[es_hom & cod5.isin(DANE_VALLE)].copy()
         hom["codigo5"] = cod5[hom.index]

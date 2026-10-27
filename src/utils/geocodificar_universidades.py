@@ -23,6 +23,8 @@ import pandas as pd                             # tablas de datos (DataFrames)
 from geopy.extra.rate_limiter import RateLimiter
 from geopy.geocoders import Nominatim           # cliente del geocodificador de OpenStreetMap
 
+from src.limpieza.fincaraiz import sin_tildes   # 'Politécnico' -> 'politecnico' (comparar sin tildes)
+
 # --- Rutas del proyecto ---------------------------------------------------
 # Path(__file__) es la ruta de ESTE archivo; subimos 3 niveles hasta la raíz.
 RAIZ = Path(__file__).resolve().parents[2]
@@ -60,17 +62,23 @@ def main() -> None:
             fuentes.append("manual")
             continue
 
-        # Intento 1: la consulta específica.  Intento 2: nombre + municipio.
-        consultas = [fila["consulta"], f'{fila["nombre"]}, {fila["municipio"]}, Antioquia']
+        # Varias consultas posibles separadas por " | " (se prueban en orden) + nombre y municipio.
+        consultas = [q.strip() for q in str(fila["consulta"]).split("|")]
+        consultas.append(f'{fila["nombre"]}, {fila["municipio"]}, Antioquia')
+        # 'debe_contener': palabras que el resultado DEBE tener (separadas por |), para rechazar
+        # coincidencias equivocadas (p. ej. "Politécnico mayor" cuando buscamos "Colegio Mayor").
+        claves = [sin_tildes(k) for k in str(fila.get("debe_contener", "") or "").split("|") if k.strip() and k != "nan"]
         ubicacion = None
         for q in consultas:
-            ubicacion = geocode(
-                q,
-                country_codes="co",
-                viewbox=[VALLE_NO, VALLE_SE],
-                bounded=True,          # solo resultados dentro de la caja
-                language="es",
-            )
+            candidatos = geocode(q, country_codes="co", viewbox=[VALLE_NO, VALLE_SE], bounded=True,
+                                 language="es", exactly_one=False, limit=5) or []
+            for c in candidatos:
+                texto = sin_tildes(c.address)
+                if claves and not any(k in texto for k in claves):
+                    print(f"    descartado para {fila['sigla']}: {c.address[:60]}")
+                    continue
+                ubicacion = c
+                break
             if ubicacion:
                 break
 
@@ -78,7 +86,7 @@ def main() -> None:
             df.at[i, "lat"] = round(ubicacion.latitude, 6)
             df.at[i, "lon"] = round(ubicacion.longitude, 6)
             fuentes.append("nominatim")
-            print(f"  OK   {fila['sigla']:<16} -> {ubicacion.address[:70]}")
+            print(f"  OK   {fila['sigla']:<16} -> {ubicacion.address[:80]}")
         else:
             fuentes.append("no_encontrado")
             print(f"  FALLA {fila['sigla']:<15} -> no se encontró; ponla a mano en config/universidades.csv")
@@ -91,7 +99,13 @@ def main() -> None:
 
     # --- Mapa de verificación --------------------------------------------
     ok = df.dropna(subset=["lat", "lon"])
-    mapa = folium.Map(location=[6.25, -75.58], zoom_start=12, tiles="OpenStreetMap")
+    # Fondo Esri: el de OpenStreetMap bloquea mapas abiertos como archivo local ("Access blocked")
+    # y CartoDB ahora exige una clave de API. Esri no pide clave.
+    mapa = folium.Map(location=[6.25, -75.58], zoom_start=12, tiles=None)
+    folium.TileLayer(
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        attr="Tiles &copy; Esri", name="Esri World Street Map",
+    ).add_to(mapa)
     colores = {"Pública": "blue", "Privada": "red"}
     for _, f in ok.iterrows():
         folium.Marker(

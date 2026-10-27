@@ -14,13 +14,17 @@ SALIDAS:
     reports/figures/mapa_seguridad.png
 
 MÉTODO (dos niveles)
-  1. Municipio (los 10): tasa por 100.000 habitantes de 4 hurtos, promedio 2024-2025
-     (últimos años completos), con UNA sola fuente (Policía) -> comparables entre sí.
+  1. Municipio (los 10): tasa por 100.000 habitantes de homicidio intencional y de 4 hurtos,
+     promedio 2024-2025 (últimos años completos), con UNA sola fuente (Policía) -> comparables.
+     Por qué homicidios: los hurtos son DENUNCIAS (en estratos altos se denuncia mucho más:
+     subregistro) y se inflan donde hay población flotante (Centro, Laureles, El Poblado).
+     El homicidio casi siempre se registra y mide la violencia, que es lo que más pesa.
   2. Comunas de Medellín: factor relativo = tasa de la comuna / tasa de Medellín,
      con datos de la Alcaldía 2021-2022 (años completos post-pandemia).
      Tasa estimada de la comuna = tasa reciente de Medellín (nivel 1) x factor.
-  3. Índice 0-100 (100 = más seguro): para cada hurto se ordena a las 30 unidades
-     (percentil) y se promedian los 4 hurtos con el mismo peso.
+  3. Índices 0-100 (100 = más seguro), ordenando las 30 unidades (percentil):
+       indice_violencia (homicidios), indice_hurto (promedio de los 4 hurtos)
+       indice_seguridad = 50 % violencia + 50 % hurto
 
 Ejecutar:  python -m src.features.seguridad
 """
@@ -48,8 +52,10 @@ DANE = {"05001": "Medellín", "05079": "Barbosa", "05088": "Bello", "05129": "Ca
         "05266": "Envigado", "05308": "Girardota", "05360": "Itagüí", "05380": "La Estrella", "05631": "Sabaneta"}
 ANIOS_MUNICIPIO = [2024, 2025]
 ANIOS_COMUNA = [2021, 2022]
-DELITOS = ["hurto_personas", "hurto_residencias", "hurto_motos", "hurto_carros"]
-CONDUCTAS_ALCALDIA = {"Hurto a persona": "hurto_personas", "Hurto a residencia": "hurto_residencias",
+HURTOS = ["hurto_personas", "hurto_residencias", "hurto_motos", "hurto_carros"]
+DELITOS = HURTOS + ["homicidios"]   # homicidio INTENCIONAL (sin los de tránsito)
+PESO_VIOLENCIA = 0.5                # el índice = 50 % violencia (homicidios) + 50 % hurtos
+CONDUCTAS_ALCALDIA = {"Homicidio": "homicidios", "Hurto a persona": "hurto_personas", "Hurto a residencia": "hurto_residencias",
                       "Hurto de moto": "hurto_motos", "Hurto de carro": "hurto_carros"}
 
 
@@ -83,6 +89,13 @@ def leer_delitos_municipio() -> pd.DataFrame:
         # codigo_dane trae 8 dígitos (municipio + centro poblado): tomamos los 5 primeros
         partes.append(pd.DataFrame({"codigo": d["codigo_dane"].str.zfill(8).str[:5], "delito": delito,
                                     "anio": anio_de(d["fecha_hecho"]), "casos": pd.to_numeric(d["cantidad"])}))
+
+    # Homicidios intencionales (archivos de la Policía, ya filtrados al Valle de Aburrá)
+    for anio in ANIOS_MUNICIPIO:
+        h = pd.read_csv(RAW / "seguridad" / f"homicidios_valle_{anio}.csv", dtype=str, encoding="utf-8-sig")
+        h = h[h["DELITOS"].str.lower().str.contains("intencional")]
+        partes.append(pd.DataFrame({"codigo": h["codigo5"].str.zfill(5), "delito": "homicidios",
+                                    "anio": anio, "casos": pd.to_numeric(h["casos"])}))
 
     t = pd.concat(partes, ignore_index=True)
     t = t[t["codigo"].isin(DANE) & t["delito"].isin(DELITOS)]
@@ -143,8 +156,24 @@ def leer_comunas() -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 # Cálculo
 # ---------------------------------------------------------------------------
+def calcular_indices(tasas: pd.DataFrame, referencia: pd.DataFrame) -> pd.DataFrame:
+    """
+    Índices 0-100 (100 = más seguro) de cada fila de `tasas`, comparándola con las 30 unidades (`referencia`).
+    Percentil de una tasa = fracción de unidades con una tasa menor o igual (0 = la más baja).
+      indice_violencia = 100 x (1 - percentil de homicidios)
+      indice_hurto     = 100 x (1 - promedio de los percentiles de los 4 hurtos)
+      indice_seguridad = 50 % violencia + 50 % hurto
+    """
+    pct = pd.DataFrame({d: tasas[d].map(lambda v, d=d: (referencia[d] <= v).mean()) for d in DELITOS})
+    out = pd.DataFrame(index=tasas.index)
+    out["indice_violencia"] = (1 - pct["homicidios"]) * 100
+    out["indice_hurto"] = (1 - pct[HURTOS].mean(axis=1)) * 100
+    out["indice_seguridad"] = PESO_VIOLENCIA * out["indice_violencia"] + (1 - PESO_VIOLENCIA) * out["indice_hurto"]
+    return out.round(1)
+
+
 def main() -> None:
-    print("1) Tasas por municipio (Policía, promedio 2024-2025)")
+    print("1) Tasas por 100.000 habitantes por municipio (Policía, promedio 2024-2025)")
     casos = leer_delitos_municipio()
     pob = leer_poblacion_dane()
     print("  Años disponibles en los delitos:", sorted(casos["anio"].dropna().astype(int).unique())[-6:])
@@ -179,10 +208,9 @@ def main() -> None:
     ])
     unidades.index = [f"{t}:{i}" for t, i in zip(unidades["unidad_tipo"], unidades.index)]
     # Índice: percentil de cada hurto (0 = la tasa más baja = más seguro) -> promedio -> 0-100 seguro
-    percentiles = unidades[DELITOS].rank(pct=True)
-    unidades["indice_seguridad"] = ((1 - percentiles.mean(axis=1)) * 100).round(1)
+    unidades = unidades.join(calcular_indices(unidades[DELITOS], unidades[DELITOS]))
     print("\n3) Índice de seguridad (100 = más seguro) de las 30 unidades:")
-    print(unidades[["nombre", "unidad_tipo", "indice_seguridad"] + DELITOS].round(1)
+    print(unidades[["nombre", "unidad_tipo", "indice_seguridad", "indice_violencia", "indice_hurto"] + DELITOS].round(1)
           .sort_values("indice_seguridad", ascending=False).to_string())
     REPORTS.mkdir(exist_ok=True)
     unidades.round(2).to_csv(REPORTS / "seguridad_unidades.csv", encoding="utf-8-sig")
@@ -197,10 +225,10 @@ def main() -> None:
     # Medellín sin comuna (sin coordenadas): usa la tasa de Medellín completa
     medellin = tasa_mun.loc[["Medellín"]].assign(nombre="Medellín", unidad_tipo="municipio")
     # Su índice: en qué percentil quedarían las tasas de Medellín completa frente a las 30 unidades
-    pct_med = pd.Series({d: (unidades[d] <= tasa_mun.loc["Medellín", d]).mean() for d in DELITOS})
-    medellin["indice_seguridad"] = round((1 - pct_med.mean()) * 100, 1)
+    medellin = medellin.join(calcular_indices(medellin[DELITOS], unidades[DELITOS]))
     tabla = pd.concat([unidades, medellin.set_axis(["municipio:Medellín"])])
-    tabla_cols = tabla[DELITOS + ["indice_seguridad"]].add_prefix("seg_").rename(columns={"seg_indice_seguridad": "indice_seguridad"})
+    indices = ["indice_seguridad", "indice_violencia", "indice_hurto"]
+    tabla_cols = tabla[DELITOS].add_prefix("seg_").join(tabla[indices])
     df["unidad_seguridad"] = clave
     df = df.join(tabla_cols, on="unidad_seguridad")
     sin = df["indice_seguridad"].isna().sum()
@@ -208,7 +236,7 @@ def main() -> None:
 
     # Sanity check: ¿el índice se relaciona con el estrato como esperaríamos?
     print("\nÍndice de seguridad mediano por estrato (sanity check):")
-    print(df.groupby("estrato")["indice_seguridad"].median().round(1).to_string())
+    print(df.groupby("estrato")[indices].median().round(1).to_string())
 
     salida = INTERIM / f"fincaraiz_seguridad_{fecha}.csv"
     df.to_csv(salida, index=False, encoding="utf-8-sig")
@@ -228,7 +256,7 @@ def dibujar_mapa(unidades: pd.DataFrame) -> None:
     fig, ax = plt.subplots(figsize=(7, 10))
     capas.plot(ax=ax, column="indice_seguridad", cmap="RdYlGn", legend=True, edgecolor="black", linewidth=0.3,
                legend_kwds={"label": "Índice de seguridad (100 = más seguro)"}, missing_kwds={"color": "lightgray"})
-    ax.set_title("Índice de seguridad por municipio y comuna (hurtos por habitante)")
+    ax.set_title("Índice de seguridad: 50 % homicidios + 50 % hurtos (por habitante)")
     fig.savefig(REPORTS / "figures" / "mapa_seguridad.png", dpi=150, bbox_inches="tight")
     plt.close(fig)
     print(f"Mapa: {REPORTS / 'figures' / 'mapa_seguridad.png'}")
