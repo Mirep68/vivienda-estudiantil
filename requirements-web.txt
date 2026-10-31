@@ -1,0 +1,8 @@
+# Dependencias MÍNIMAS para publicar la web (API + página). El entrenamiento y el scraping usan requirements.txt.
+fastapi
+uvicorn
+pandas
+numpy
+sqlalchemy
+psycopg[binary]
+python-dotenv

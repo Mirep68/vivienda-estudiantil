@@ -13,38 +13,31 @@ Paso 6: cargar todos los datos del proyecto a PostgreSQL (con PostGIS si está i
 
 ¿POR QUÉ UNA BASE DE DATOS SI YA TENEMOS CSV?
     - El documento lo pide ("motor de base de datos") y es lo que hace una empresa real.
-    - La API y la página web consultarán aquí (filtros por precio, municipio, distancia...)
-      en milisegundos, en lugar de leer un CSV de 31.000 filas en cada búsqueda.
-    - Varias tablas relacionadas: cada vivienda apunta a su unidad de seguridad, su municipio...
+    - La API y la página web consultan aquí (filtros por precio, municipio, distancia...).
+    - Varias tablas relacionadas: cada vivienda apunta a su unidad de seguridad, su valoración...
     - Con PostGIS, la base de datos entiende geometría: "viviendas a menos de 1 km de la USB"
       es una sola consulta SQL que usa un índice espacial.
 
-LIBRERÍAS
-    SQLAlchemy  "traductor" entre Python y cualquier motor SQL. pandas lo usa en df.to_sql().
-    psycopg     el "driver": el programa que realmente habla con el servidor PostgreSQL.
-    python-dotenv  lee la contraseña del archivo .env (que NO se sube a GitHub).
+LOCAL O EN LA NUBE
+    Local: variables PG_* del .env (la base se crea si no existe).
+    Nube (Neon, etc.): DATABASE_URL en el .env; la base ya la creó el servicio, solo se llenan las tablas.
+    La conexión está en src/db/conexion.py.
 
 RENOVABLE
-    Cada ejecución reemplaza las tablas con los CSV más recientes y deja una fila en 'cargas'
-    (fecha, tabla, filas, archivo de origen). Así, al repetir el scraping, basta con volver a correr esto.
+    Cada ejecución reemplaza las tablas con los CSV más recientes y deja una fila en 'cargas'.
 
 Ejecutar:  python -u -m src.db.cargar_postgres
 """
 
 import os
-import re
 from datetime import datetime
-from pathlib import Path
 
 import geopandas as gpd
 import pandas as pd
-from dotenv import load_dotenv
 from sqlalchemy import create_engine, text
-from sqlalchemy.engine import URL
 
-from src.limpieza.fincaraiz import sin_tildes
+from src.db.conexion import RAIZ, cargar_entorno, nombre_columna, url
 
-RAIZ = Path(__file__).resolve().parents[2]
 PROCESSED = RAIZ / "data" / "processed"
 REF = RAIZ / "data" / "reference"
 REPORTS = RAIZ / "reports"
@@ -56,20 +49,8 @@ TABLAS = ["valoracion", "viviendas", "universidades", "seguridad_unidades", "mun
 # --------------------------------------------------------------------------------------------
 # Conexión
 # --------------------------------------------------------------------------------------------
-def url(base: str) -> URL:
-    """URL.create arma la dirección de conexión y protege caracteres raros de la contraseña (@, #, :)."""
-    return URL.create(
-        "postgresql+psycopg",
-        username=os.getenv("PG_USUARIO", "postgres"),
-        password=os.getenv("PG_CLAVE"),
-        host=os.getenv("PG_HOST", "localhost"),
-        port=int(os.getenv("PG_PUERTO", "5432")),
-        database=base,
-    )
-
-
 def crear_base_si_no_existe(nombre: str) -> None:
-    """Se conecta a la base 'postgres' (siempre existe) y crea la nuestra si falta.
+    """Solo en local: se conecta a la base 'postgres' (siempre existe) y crea la nuestra si falta.
     CREATE DATABASE no puede ir dentro de una transacción, por eso AUTOCOMMIT."""
     motor = create_engine(url("postgres"), isolation_level="AUTOCOMMIT")
     with motor.connect() as c:
@@ -99,19 +80,12 @@ def activar_postgis(motor) -> bool:
 # --------------------------------------------------------------------------------------------
 # Utilidades
 # --------------------------------------------------------------------------------------------
-def nombre_columna(c: str) -> str:
-    """PostgreSQL distingue mayúsculas solo si se usan comillas; para no sufrir con eso,
-    todas las columnas en minúscula, sin tildes y con '_'.  'dist_UdeA_km' -> 'dist_udea_km'."""
-    return re.sub(r"[^a-z0-9]+", "_", sin_tildes(str(c)).lower()).strip("_")
-
-
 def subir(motor, df: pd.DataFrame, tabla: str, origen: str, clave: str | None = None) -> None:
     df = df.copy()
     df.columns = [nombre_columna(c) for c in df.columns]
     repetidas = df.columns[df.columns.duplicated()].tolist()
     if repetidas:
         raise SystemExit(f"{tabla}: columnas repetidas tras normalizar nombres: {repetidas}")
-    # to_sql crea la tabla con tipos deducidos de pandas (texto, entero, double precision...)
     # method="multi" manda muchas filas en un solo INSERT; cada celda es un "parámetro" y
     # PostgreSQL acepta máximo 65.535 por consulta -> filas por lote = 30.000 / columnas.
     lote = max(1, 30_000 // df.shape[1])
@@ -133,7 +107,7 @@ def geometria_puntos(motor, tabla: str) -> None:
         c.execute(text(f"CREATE INDEX {tabla}_geom_idx ON {tabla} USING GIST (geom)"))
 
 
-def subir_capa(motor, archivo: Path, tabla: str, postgis: bool, clave: str | None = None) -> None:
+def subir_capa(motor, archivo, tabla: str, postgis: bool, clave: str | None = None) -> None:
     """Capa de polígonos: la geometría viaja como texto WKT y PostGIS la convierte."""
     gdf = gpd.read_file(archivo).to_crs(4326)
     df = pd.DataFrame(gdf.drop(columns="geometry"))
@@ -149,13 +123,14 @@ def subir_capa(motor, archivo: Path, tabla: str, postgis: bool, clave: str | Non
 
 # --------------------------------------------------------------------------------------------
 def main() -> None:
-    load_dotenv(RAIZ / ".env")
-    if not os.getenv("PG_CLAVE"):
-        raise SystemExit("Falta PG_CLAVE en el archivo .env (copia .env.ejemplo a .env y pon tu contraseña).")
-    base = os.getenv("PG_BASE", "vivienda_estudiantil")
-
-    crear_base_si_no_existe(base)
-    motor = create_engine(url(base))
+    cargar_entorno()
+    en_la_nube = bool(os.getenv("DATABASE_URL"))
+    if not en_la_nube:
+        if not os.getenv("PG_CLAVE"):
+            raise SystemExit("Falta PG_CLAVE (o DATABASE_URL) en el archivo .env.")
+        crear_base_si_no_existe(os.getenv("PG_BASE", "vivienda_estudiantil"))
+    motor = create_engine(url())
+    print(f"Conectado a: {motor.url.host} / {motor.url.database}" + (" (nube)" if en_la_nube else " (local)"))
     postgis = activar_postgis(motor)
 
     with motor.begin() as c:
@@ -208,12 +183,11 @@ def main() -> None:
         for col in ["municipio", "tipo_inmueble", "precio", "estrato", "habitaciones"]:
             c.execute(text(f"CREATE INDEX viviendas_{col}_idx ON viviendas ({col})"))
         # Llave foránea: cada vivienda apunta a una unidad de seguridad que debe existir.
-        # 'municipio:Medellín' (anuncios sin comuna) no está entre las 30 unidades -> se agrega.
+        # 'municipio:Medellín' (anuncios sin comuna) no está entre las 30 unidades -> se agrega,
+        # con sus tasas e índices copiados de las viviendas (son iguales en toda la unidad).
         faltan = c.execute(text("""SELECT DISTINCT unidad_seguridad FROM viviendas
                                    WHERE unidad_seguridad IS NOT NULL
                                      AND unidad_seguridad NOT IN (SELECT unidad FROM seguridad_unidades)""")).scalars().all()
-        # Sus tasas e índices se copian de las viviendas (seguridad.py ya se las asignó: son iguales
-        # para todas las viviendas de la unidad), así la fila no queda vacía.
         for u in faltan:
             c.execute(text("""
                 INSERT INTO seguridad_unidades (unidad, nombre, unidad_tipo,
@@ -257,7 +231,6 @@ def verificar(motor, postgis: bool, filas_csv: int) -> None:
             for fila in c.execute(q):
                 med = f"${fila.mediana:,.0f}" if fila.mediana else "-"
                 print(f"    {fila.sigla:<15} {fila.n:>6,} viviendas  mediana {med}")
-            # Comparación con lo que calculó Python (entorno.py): deben coincidir casi exacto
             q = text("""SELECT avg(abs(ST_Distance(v.geom::geography, m.geom::geography) / 1000 - v.dist_universidad_min_km))
                         FROM viviendas v
                         CROSS JOIN LATERAL (SELECT geom FROM universidades u

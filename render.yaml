@@ -1,0 +1,15 @@
+# Configuración para publicar ViviU en Render (https://render.com) como "Blueprint".
+# La base de datos vive en Neon; su dirección se pone a mano en Render como DATABASE_URL (nunca en GitHub).
+services:
+  - type: web
+    name: viviu
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements-web.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/resumen
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: DATABASE_URL
+        sync: false

@@ -1,0 +1,26 @@
+Copyright (c) 2026 José Miguel Rico Acosta. Todos los derechos reservados.
+
+ViviU — recomendador de vivienda estudiantil para el Valle de Aburrá.
+Proyecto académico, curso de Deep Learning, Ingeniería de Sistemas Cibernéticos,
+Universidad de San Buenaventura Medellín.
+
+Este repositorio (código fuente, modelos entrenados, documentación, diseño de la interfaz y textos)
+es una obra protegida por el derecho de autor (Ley 23 de 1982 de Colombia y Decisión Andina 351 de 1993).
+
+Se permite VER el contenido de este repositorio con fines de consulta y evaluación académica.
+Sin autorización previa y por escrito del autor NO se permite:
+  - copiar, modificar, distribuir, publicar o sublicenciar el código o partes sustanciales de él;
+  - usarlo, total o parcialmente, con fines comerciales;
+  - presentarlo como obra propia en trabajos académicos o profesionales.
+
+Las citas breves con fines académicos están permitidas siempre que se mencione al autor y el repositorio.
+
+DATOS DE TERCEROS: los anuncios inmobiliarios pertenecen a sus anunciantes y a Finca Raíz; las estadísticas
+y capas geográficas pertenecen a la Policía Nacional, el DANE, la Alcaldía de Medellín y OpenStreetMap
+(ODbL). Esta licencia no otorga derecho alguno sobre esos datos.
+
+SIN GARANTÍA: el software y sus resultados (precio justo, clasificación, índice de seguridad, recomendaciones)
+son estimaciones con fines académicos, se entregan "tal cual" y no constituyen asesoría inmobiliaria,
+financiera ni de seguridad. El autor no responde por decisiones tomadas con base en ellos.
+
+Contacto para permisos: josemiguelrico68@gmail.com

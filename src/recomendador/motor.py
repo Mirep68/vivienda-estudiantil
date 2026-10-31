@@ -72,23 +72,22 @@ class Perfil:
 
 
 def columna_universidad(sigla: str) -> str:
-    from src.db.cargar_postgres import nombre_columna
+    from src.db.conexion import nombre_columna
     return nombre_columna(f"dist_{sigla}_km")
 
 
 def cargar_datos() -> pd.DataFrame:
     """Viviendas + valoración desde PostgreSQL (la misma fuente que usará la API)."""
-    from dotenv import load_dotenv
     from sqlalchemy import create_engine, text
 
-    from src.db.cargar_postgres import RAIZ, url
-    load_dotenv(RAIZ / ".env")
-    motor = create_engine(url(os.getenv("PG_BASE", "vivienda_estudiantil")))
+    from src.db.conexion import url
+    motor = create_engine(url())
     q = text("""SELECT v.*, a.precio_justo, a.diferencia_pct, a.clase_precio, a.segmento_nombre
                 FROM viviendas v JOIN valoracion a USING (id)""")
     with motor.connect() as c:
         df = pd.read_sql(q, c)
-    return df.drop(columns=["geom"], errors="ignore")
+    # Textos largos que la web no usa: fuera, para ahorrar memoria en el servidor
+    return df.drop(columns=["geom", "descripcion", "titulo", "direccion"], errors="ignore")
 
 
 def cargar_vectores() -> tuple[np.ndarray, dict]:

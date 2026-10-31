@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ViviU · Vivienda cerca de tu universidad</title>
+<meta name="description" content="ViviU recomienda vivienda a estudiantes del Valle de Aburrá con anuncios reales y un precio justo estimado por inteligencia artificial.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,650;12..96,800&family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<style>
+/* ===== Tokens ===================================================================== */
+:root {
+  --papel: #F5F7F6;  --superficie: #FFFFFF;  --tinta: #16232E;  --tinta-2: #4A5966;  --tinta-3: #7C8994;
+  --pino: #1E5B4F;  --pino-osc: #143F37;  --pino-claro: #E6EFEC;  --guayacan: #F2B705;  --guayacan-claro: #FDF3D1;
+  --niebla: #DCE3E0;  --niebla-2: #EDF1EF;
+  --ganga: #1C7C3C;  --ganga-f: #E3F2E7;  --justo: #4A5966;  --justo-f: #EDF1EF;
+  --caro: #A65300;  --caro-f: #FBEEDD;  --verificar: #B42318;  --verificar-f: #FCE8E6;
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --texto: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --r-s: 6px; --r-m: 12px; --r-l: 20px;
+  --sombra: 0 1px 2px rgba(22, 35, 46, .06), 0 8px 24px -12px rgba(22, 35, 46, .18);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; animation: none !important; } }
+body { margin: 0; background: var(--papel); color: var(--tinta); font: 400 15.5px/1.55 var(--texto); -webkit-font-smoothing: antialiased; }
+h1, h2, h3 { font-family: var(--display); letter-spacing: -0.02em; line-height: 1.12; margin: 0; }
+a { color: var(--pino); }
+button, input, select { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--guayacan); outline-offset: 2px; border-radius: 4px; }
+.oculto { display: none !important; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.envoltura { max-width: 1440px; margin: 0 auto; padding: 0 28px; }
+@media (max-width: 700px) { .envoltura { padding: 0 16px; } }
+
+/* ===== Encabezado =================================================================== */
+.barra { position: sticky; top: 0; z-index: 1000; background: rgba(245, 247, 246, .92); backdrop-filter: blur(10px);
+         border-bottom: 1px solid var(--niebla); }
+.barra .envoltura { display: flex; align-items: center; gap: 28px; height: 64px; }
+.marca { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--tinta); }
+.marca svg { flex: none; }
+.marca b { font: 800 23px/1 var(--display); letter-spacing: -0.04em; }
+.marca small { display: block; font-size: 11.5px; color: var(--tinta-3); font-weight: 500; letter-spacing: 0; margin-top: 2px; }
+nav.menu { display: flex; gap: 4px; margin-left: 8px; }
+nav.menu a { padding: 8px 14px; border-radius: 999px; text-decoration: none; color: var(--tinta-2); font-weight: 500; font-size: 14.5px; }
+nav.menu a:hover { background: var(--niebla-2); color: var(--tinta); }
+nav.menu a[aria-current="page"] { background: var(--tinta); color: #fff; }
+.barra .derecha { margin-left: auto; display: flex; gap: 10px; align-items: center; }
+.boton-fav { display: inline-flex; gap: 8px; align-items: center; padding: 8px 14px; border: 1px solid var(--niebla);
+             background: var(--superficie); border-radius: 999px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.boton-fav .cuenta { background: var(--guayacan); color: var(--tinta); border-radius: 999px; min-width: 22px; padding: 0 6px; font-size: 12.5px; text-align: center; }
+.hamburguesa { display: none; border: 1px solid var(--niebla); background: var(--superficie); border-radius: 10px; width: 40px; height: 40px; cursor: pointer; }
+@media (max-width: 980px) {
+  nav.menu { position: absolute; top: 64px; left: 0; right: 0; flex-direction: column; background: var(--papel);
+             border-bottom: 1px solid var(--niebla); padding: 10px 16px 16px; display: none; }
+  nav.menu.abierto { display: flex; }
+  .hamburguesa { display: inline-grid; place-items: center; }
+  .marca small { display: none; }
+}
+
+/* ===== Hero: la búsqueda como una frase ============================================== */
+.hero { position: relative; background: var(--pino); color: #fff; overflow: hidden; }
+.hero svg.curvas { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.hero .envoltura { position: relative; padding-top: 64px; padding-bottom: 56px; }
+.hero h1 { font-size: clamp(30px, 4.4vw, 54px); font-weight: 800; max-width: 17ch; }
+.hero p.bajada { color: rgba(255,255,255,.82); max-width: 60ch; margin: 16px 0 34px; font-size: 17px; }
+.frase { background: var(--superficie); color: var(--tinta); border-radius: var(--r-l); padding: 22px 26px; box-shadow: 0 20px 50px -20px rgba(0,0,0,.45);
+         font: 500 clamp(18px, 2vw, 24px)/2.05 var(--display); letter-spacing: -0.01em; max-width: 1040px; }
+.frase select, .frase input { font: 650 1em var(--display); color: var(--pino); background: var(--pino-claro); border: 0;
+         border-bottom: 2px solid var(--pino); border-radius: 8px 8px 2px 2px; padding: 0 10px; margin: 0 2px; cursor: pointer; max-width: 100%; }
+.frase input { width: 7.6em; cursor: text; }
+.frase select#h-uni { max-width: min(560px, 100%); }
+.frase .accion { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 20px; margin-top: 10px; font: 400 14px/1.4 var(--texto); color: var(--tinta-3); }
+.btn { display: inline-flex; align-items: center; gap: 8px; border: 0; border-radius: 999px; padding: 12px 22px; font-weight: 700; cursor: pointer; text-decoration: none; }
+.btn-primario { background: var(--tinta); color: #fff; }
+.btn-primario:hover { background: var(--pino-osc); }
+.btn-amarillo { background: var(--guayacan); color: var(--tinta); }
+.btn-borde { background: var(--superficie); border: 1px solid var(--niebla); color: var(--tinta); }
+.hero .confianza { display: flex; flex-wrap: wrap; gap: 10px 30px; margin-top: 30px; color: rgba(255,255,255,.85); font-size: 14px; }
+.hero .confianza b { color: var(--guayacan); font-family: var(--display); font-size: 20px; display: block; letter-spacing: -0.02em; }
+
+/* ===== Aplicación: filtros | resultados | mapa ======================================= */
+.app { display: grid; grid-template-columns: 300px minmax(0, 1fr) minmax(0, 0.95fr); gap: 22px; padding-top: 26px; padding-bottom: 40px; align-items: start; }
+@media (max-width: 1280px) { .app { grid-template-columns: 290px minmax(0, 1fr); } .columna-mapa { grid-column: 2; grid-row: 1; } }
+@media (max-width: 900px) { .app { grid-template-columns: 1fr; } .columna-mapa { grid-column: 1; grid-row: auto; } }
+
+.filtros { position: sticky; top: 84px; max-height: calc(100vh - 100px); overflow: auto; background: var(--superficie);
+           border: 1px solid var(--niebla); border-radius: var(--r-m); }
+@media (max-width: 900px) { .filtros { position: fixed; inset: 0 0 0 auto; width: min(380px, 92vw); max-height: none; z-index: 1100; border-radius: 0;
+                                       transform: translateX(105%); transition: transform .25s ease; }
+                            .filtros.abierto { transform: none; box-shadow: -20px 0 40px rgba(0,0,0,.25); } }
+.filtros-cab { display: flex; justify-content: space-between; align-items: center; padding: 16px 18px 6px; }
+.filtros-cab h2 { font-size: 18px; }
+.filtros-cab button { border: 0; background: none; color: var(--pino); font-weight: 600; cursor: pointer; font-size: 13.5px; }
+.grupo { padding: 14px 18px 16px; border-top: 1px solid var(--niebla-2); }
+.grupo:first-of-type { border-top: 0; }
+.grupo h3 { font: 600 14.5px/1.3 var(--texto); letter-spacing: 0; margin-bottom: 10px; }
+.grupo .nota { color: var(--tinta-3); font-size: 12.5px; margin: 6px 0 0; }
+.campo { margin-bottom: 12px; }
+.campo label, .campo .etq { display: flex; justify-content: space-between; font-size: 13.5px; color: var(--tinta-2); margin-bottom: 6px; }
+.campo label b { color: var(--tinta); font-variant-numeric: tabular-nums; }
+.campo select { width: 100%; padding: 9px 10px; border: 1px solid var(--niebla); border-radius: var(--r-s); background: var(--superficie); }
+input[type=range] { width: 100%; accent-color: var(--pino); margin: 0; }
+.segmentado { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; border: 1px solid var(--niebla); border-radius: 10px; padding: 3px; gap: 3px; background: var(--niebla-2); }
+.segmentado button { border: 0; background: none; border-radius: 7px; padding: 7px 4px; font-size: 13px; font-weight: 600; color: var(--tinta-2); cursor: pointer; }
+.segmentado button[aria-pressed="true"] { background: var(--superficie); color: var(--tinta); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border: 1px solid var(--niebla); border-radius: 999px;
+        font-size: 13px; cursor: pointer; background: var(--superficie); user-select: none; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip:has(input:checked) { background: var(--pino-claro); border-color: var(--pino); color: var(--pino-osc); font-weight: 600; }
+.chip:has(input:focus-visible) { outline: 3px solid var(--guayacan); outline-offset: 2px; }
+.presets { display: grid; gap: 6px; }
+.preset { display: grid; grid-template-columns: 22px 1fr; gap: 2px 10px; align-items: start; text-align: left; padding: 10px 12px; border: 1px solid var(--niebla);
+          border-radius: 10px; background: var(--superficie); cursor: pointer; }
+.preset svg { grid-row: span 2; margin-top: 2px; color: var(--tinta-3); }
+.preset b { font-size: 13.5px; } .preset span { font-size: 12.5px; color: var(--tinta-3); }
+.preset[aria-pressed="true"] { border-color: var(--pino); background: var(--pino-claro); }
+.preset[aria-pressed="true"] svg { color: var(--pino); }
+.pesos { margin-top: 10px; display: grid; gap: 7px; }
+.peso { display: grid; grid-template-columns: 112px 1fr 26px; align-items: center; gap: 10px; font-size: 13px; color: var(--tinta-2); }
+.peso output { text-align: right; font-weight: 600; color: var(--tinta); font-variant-numeric: tabular-nums; }
+details.ajuste summary { cursor: pointer; color: var(--pino); font-weight: 600; font-size: 13.5px; margin-top: 10px; list-style: none; }
+details.ajuste summary::-webkit-details-marker { display: none; }
+details.ajuste summary::before { content: "+ "; } details.ajuste[open] summary::before { content: "− "; }
+.interruptor { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; cursor: pointer; }
+.interruptor input { appearance: none; flex: none; width: 36px; height: 21px; border-radius: 999px; background: var(--niebla); position: relative; cursor: pointer; margin: 1px 0 0; transition: background .15s; }
+.interruptor input::after { content: ""; position: absolute; top: 2px; left: 2px; width: 17px; height: 17px; border-radius: 50%; background: #fff; box-shadow: 0 1px 2px rgba(0,0,0,.3); transition: transform .15s; }
+.interruptor input:checked { background: var(--pino); } .interruptor input:checked::after { transform: translateX(15px); }
+.filtros-pie { position: sticky; bottom: 0; background: var(--superficie); border-top: 1px solid var(--niebla); padding: 12px 18px; display: none; }
+@media (max-width: 900px) { .filtros-pie { display: block; } }
+.velo { position: fixed; inset: 0; background: rgba(22,35,46,.45); z-index: 1050; }
+
+/* Resultados */
+.res-cab { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 10px 16px; margin-bottom: 12px; }
+.res-cab h2 { font-size: 24px; }
+.res-cab p { margin: 4px 0 0; color: var(--tinta-2); font-size: 14px; max-width: 60ch; }
+.res-herr { display: flex; gap: 8px; align-items: center; }
+.res-herr select { padding: 8px 10px; border: 1px solid var(--niebla); border-radius: var(--r-s); background: var(--superficie); font-size: 13.5px; }
+.mini.btn-filtros { display: none; }
+@media (max-width: 900px) { .mini.btn-filtros { display: inline-flex; } }
+.embudo { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; margin: 6px 0 16px; }
+.embudo div { background: var(--niebla-2); border-radius: 6px; padding: 8px 10px; font-size: 12px; color: var(--tinta-3); position: relative; overflow: hidden; }
+.embudo div b { display: block; font: 650 17px/1.2 var(--display); color: var(--tinta); font-variant-numeric: tabular-nums; }
+.embudo div i { position: absolute; left: 0; bottom: 0; height: 3px; background: var(--pino); }
+@media (max-width: 600px) { .embudo { grid-template-columns: repeat(3, 1fr); } .embudo div:nth-child(2), .embudo div:nth-child(4) { display: none; } }
+.lista { display: grid; gap: 10px; }
+.tarjeta { background: var(--superficie); border: 1px solid var(--niebla); border-radius: var(--r-m); padding: 16px 18px; cursor: pointer;
+           display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; transition: border-color .15s, box-shadow .15s; }
+.tarjeta:hover, .tarjeta.activa { border-color: var(--pino); box-shadow: var(--sombra); }
+.t-tit { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-weight: 700; font-size: 16px; }
+.t-pos { width: 24px; height: 24px; border-radius: 50%; background: var(--tinta); color: #fff; display: inline-grid; place-items: center; font-size: 12px; font-weight: 700; }
+.t-lugar { color: var(--tinta-2); font-size: 14px; }
+.t-precio { text-align: right; font: 650 21px/1.15 var(--display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.t-precio small { display: block; font: 500 12.5px/1.4 var(--texto); color: var(--tinta-3); }
+.t-datos { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13.5px; color: var(--tinta-2); }
+.t-datos span { display: inline-flex; align-items: center; gap: 5px; }
+.t-datos svg { color: var(--tinta-3); }
+.t-porque { grid-column: 1 / -1; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--niebla); font-size: 13.5px; color: var(--tinta-2); }
+.t-porque strong { color: var(--tinta); font-weight: 600; }
+.t-acc { grid-column: 1 / -1; display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.mini { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--niebla); background: var(--superficie);
+        font-size: 13px; font-weight: 600; text-decoration: none; color: var(--tinta); cursor: pointer; }
+.mini:hover { border-color: var(--tinta-3); }
+.mini.guardada { background: var(--guayacan-claro); border-color: var(--guayacan); }
+.sello { display: inline-flex; align-items: center; gap: 4px; padding: 2px 9px; border-radius: 999px; font-size: 12px; font-weight: 700; }
+.s-ganga { color: var(--ganga); background: var(--ganga-f); } .s-justo { color: var(--justo); background: var(--justo-f); }
+.s-caro { color: var(--caro); background: var(--caro-f); } .s-atipico { color: var(--verificar); background: var(--verificar-f); }
+.s-sin_valoracion { color: var(--tinta-3); background: var(--niebla-2); }
+.vacio { text-align: center; padding: 48px 24px; background: var(--superficie); border: 1px dashed var(--niebla); border-radius: var(--r-m); color: var(--tinta-2); }
+.vacio h3 { font-size: 20px; margin-bottom: 8px; color: var(--tinta); }
+.cargando { opacity: .45; pointer-events: none; }
+
+.columna-mapa { position: sticky; top: 84px; }
+#mapa { height: calc(100vh - 110px); min-height: 420px; border-radius: var(--r-m); border: 1px solid var(--niebla); background: var(--niebla-2); }
+@media (max-width: 1280px) { .columna-mapa { position: static; } #mapa { height: 340px; min-height: 0; } }
+.leyenda { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12.5px; color: var(--tinta-2); margin-top: 8px; }
+.leyenda i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+
+/* Detalle (panel lateral) */
+.detalle { position: fixed; top: 0; right: 0; bottom: 0; width: min(560px, 100vw); background: var(--superficie); z-index: 1200; overflow: auto;
+           transform: translateX(105%); transition: transform .25s ease; visibility: hidden; }
+.detalle.abierto { transform: none; visibility: visible; box-shadow: -30px 0 60px rgba(0,0,0,.2); }
+.d-cab { position: sticky; top: 0; background: var(--superficie); padding: 16px 22px; border-bottom: 1px solid var(--niebla); display: flex; justify-content: space-between; align-items: start; gap: 12px; z-index: 1; }
+.d-cab h2 { font-size: 22px; } .d-cab p { margin: 4px 0 0; color: var(--tinta-2); font-size: 14px; }
+.cerrar { border: 1px solid var(--niebla); background: var(--superficie); width: 36px; height: 36px; border-radius: 50%; cursor: pointer; flex: none; font-size: 18px; line-height: 1; }
+.d-cuerpo { padding: 18px 22px 30px; display: grid; gap: 22px; }
+.d-cuerpo h3 { font-size: 16px; margin-bottom: 10px; }
+.d-precio { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.d-precio b { font: 800 34px/1 var(--display); letter-spacing: -0.03em; }
+.escala { margin-top: 12px; }
+.escala .barra-es { position: relative; height: 10px; border-radius: 999px; display: grid; overflow: visible; }
+.escala .zonas { display: flex; height: 10px; border-radius: 999px; overflow: hidden; }
+.escala .zonas span:nth-child(1) { background: #B9DEC4; } .escala .zonas span:nth-child(2) { background: var(--niebla); } .escala .zonas span:nth-child(3) { background: #F4D2AA; }
+.escala .marcador { position: absolute; top: -6px; width: 4px; height: 22px; background: var(--tinta); border-radius: 2px; transform: translateX(-2px); }
+.escala .rotulos { display: flex; justify-content: space-between; font-size: 12px; color: var(--tinta-3); margin-top: 8px; }
+.escala p { font-size: 14px; color: var(--tinta-2); margin: 10px 0 0; }
+.rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1px; background: var(--niebla); border: 1px solid var(--niebla); border-radius: var(--r-m); overflow: hidden; }
+.rejilla div { background: var(--superficie); padding: 10px 12px; font-size: 12.5px; color: var(--tinta-3); }
+.rejilla div b { display: block; color: var(--tinta); font-size: 15px; font-weight: 600; margin-top: 2px; }
+.amenidades { display: flex; flex-wrap: wrap; gap: 6px; }
+.amenidades span { font-size: 12.5px; padding: 4px 10px; background: var(--niebla-2); border-radius: 999px; color: var(--tinta-2); }
+.parecidas { display: grid; gap: 8px; }
+.parecida { display: grid; grid-template-columns: 1fr auto; gap: 2px 12px; padding: 10px 12px; border: 1px solid var(--niebla); border-radius: 10px; cursor: pointer; background: var(--superficie); text-align: left; }
+.parecida:hover { border-color: var(--pino); }
+.parecida b { font-size: 14px; } .parecida span { font-size: 12.5px; color: var(--tinta-3); }
+.parecida .p { font-weight: 700; font-variant-numeric: tabular-nums; text-align: right; }
+.aviso { font-size: 12.5px; color: var(--tinta-3); background: var(--niebla-2); padding: 10px 12px; border-radius: 10px; }
+
+/* ===== Páginas de contenido ============================================================ */
+.pagina { padding-top: 48px; padding-bottom: 64px; }
+#app { scroll-margin-top: 70px; }
+.pagina-cab { max-width: 760px; margin-bottom: 36px; }
+.pagina-cab h1 { font-size: clamp(30px, 3.6vw, 46px); font-weight: 800; }
+.pagina-cab p { font-size: 17px; color: var(--tinta-2); margin: 14px 0 0; }
+.bloque { background: var(--superficie); border: 1px solid var(--niebla); border-radius: var(--r-m); padding: 22px 24px; }
+.bloque h2 { font-size: 21px; margin-bottom: 4px; }
+p.sub { color: var(--tinta-2); font-size: 14px; margin: 0 0 16px; max-width: 70ch; }
+.dos { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+@media (max-width: 900px) { .dos { grid-template-columns: 1fr; } }
+.barras { display: grid; gap: 9px; }
+.barra-h { display: grid; grid-template-columns: 110px 1fr 92px; gap: 10px; align-items: center; font-size: 13.5px; }
+.barra-h .pista { height: 14px; background: var(--niebla-2); border-radius: 4px; overflow: hidden; }
+.barra-h .pista i { display: block; height: 100%; background: var(--pino); border-radius: 4px; }
+.barra-h .v { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; }
+.barra-h.estudiante .pista i { background: var(--guayacan); }
+table.tabla { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.tabla th { text-align: left; font-weight: 600; color: var(--tinta-2); padding: 9px 10px; border-bottom: 2px solid var(--niebla); white-space: nowrap; }
+.tabla td { padding: 9px 10px; border-bottom: 1px solid var(--niebla-2); vertical-align: top; }
+.tabla td.n, .tabla th.n { text-align: right; font-variant-numeric: tabular-nums; }
+.tabla tr.destacada td { background: var(--pino-claro); font-weight: 600; }
+.desplaza { overflow-x: auto; }
+.apilada { display: flex; height: 26px; border-radius: 6px; overflow: hidden; margin: 6px 0 10px; }
+.apilada span { display: grid; place-items: center; font-size: 12px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; }
+.segmentos { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.segmento { border: 1px solid var(--niebla); border-radius: var(--r-m); padding: 14px 16px; }
+.segmento h3 { font-size: 15.5px; margin-bottom: 8px; line-height: 1.3; }
+.segmento dl { display: grid; grid-template-columns: 1fr auto; gap: 3px 10px; margin: 0; font-size: 13px; }
+.segmento dt { color: var(--tinta-3); } .segmento dd { margin: 0; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* Cómo funciona: etapas en secuencia (sí es un proceso ordenado) */
+.etapas { counter-reset: etapa; display: grid; gap: 0; margin-bottom: 26px; }
+.etapa { display: grid; grid-template-columns: 56px 1fr 220px; gap: 18px; padding: 22px 0; border-top: 1px solid var(--niebla); }
+.etapa::before { counter-increment: etapa; content: counter(etapa); font: 800 30px/1 var(--display); color: var(--pino); }
+.etapa h2 { font-size: 21px; margin-bottom: 6px; }
+.etapa p { margin: 0; color: var(--tinta-2); max-width: 68ch; }
+.etapa .dato { font: 650 15px/1.35 var(--display); color: var(--tinta); border-left: 3px solid var(--guayacan); padding-left: 12px; align-self: start; }
+.etapa .dato b { display: block; font-size: 28px; letter-spacing: -0.03em; }
+@media (max-width: 800px) { .etapa { grid-template-columns: 40px 1fr; } .etapa .dato { grid-column: 2; } }
+.arquitectura { display: flex; align-items: stretch; gap: 8px; overflow-x: auto; padding: 6px 0 4px; }
+.capa { flex: 1 0 110px; border: 1px solid var(--niebla); border-radius: 10px; padding: 12px; text-align: center; font-size: 12.5px; color: var(--tinta-2); display: grid; align-content: center; gap: 4px; position: relative; }
+.capa b { font: 650 20px/1 var(--display); color: var(--tinta); }
+.capa.entrada { background: var(--niebla-2); } .capa.salida { background: var(--guayacan-claro); border-color: var(--guayacan); }
+.capa.oculta { background: var(--pino-claro); border-color: #B8D1CA; }
+.flecha { flex: none; align-self: center; color: var(--tinta-3); }
+svg.curva { width: 100%; height: auto; display: block; }
+.leyenda-curva { display: flex; gap: 16px; font-size: 12.5px; color: var(--tinta-2); margin-top: 6px; flex-wrap: wrap; }
+.leyenda-curva i { display: inline-block; width: 18px; height: 3px; vertical-align: 3px; margin-right: 6px; }
+.lista-limpia { margin: 0; padding-left: 18px; color: var(--tinta-2); } .lista-limpia li { margin: 6px 0; }
+.lista-limpia b { color: var(--tinta); }
+
+footer.pie { border-top: 1px solid var(--niebla); padding: 26px 0 34px; color: var(--tinta-3); font-size: 13px; }
+footer.pie .envoltura { display: flex; flex-wrap: wrap; gap: 10px 30px; justify-content: space-between; }
+footer.pie b { color: var(--tinta-2); }
+.leaflet-container { font-family: var(--texto); }
+.pin { width: 28px; height: 28px; border-radius: 50% 50% 50% 4px; transform: rotate(-45deg); display: grid; place-items: center; border: 2px solid #fff; box-shadow: 0 2px 5px rgba(0,0,0,.35); }
+.pin span { transform: rotate(45deg); color: #fff; font: 700 11.5px/1 var(--texto); }
+.pin.activo { outline: 3px solid var(--guayacan); }
+</style>
+</head>
+<body>
+
+<!-- ===== Encabezado ===== -->
+<header class="barra">
+  <div class="envoltura">
+    <a class="marca" href="#buscar" aria-label="ViviU, inicio">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <rect width="34" height="34" rx="9" fill="#1E5B4F"/>
+        <path d="M7 16.5 17 8l10 8.5" fill="none" stroke="#F2B705" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M11 16v5.5a6 6 0 0 0 12 0V16" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+      </svg>
+      <span><b>ViviU</b><small>Vivienda cerca de tu universidad</small></span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Secciones">
+      <a href="#buscar" data-ruta="buscar">Buscar vivienda</a>
+      <a href="#mercado" data-ruta="mercado">Mercado</a>
+      <a href="#como-funciona" data-ruta="como-funciona">Cómo funciona</a>
+      <a href="#datos" data-ruta="datos">Datos y límites</a>
+    </nav>
+    <div class="derecha">
+      <button class="boton-fav" id="btn-favoritas" type="button" aria-label="Ver viviendas guardadas">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 3 5 6.5 5c2 0 3.6 1.1 5.5 3.2C13.9 6.1 15.5 5 17.5 5 21 5 23.1 8.4 21.6 11.8 19.5 16.4 12 21 12 21Z" fill="currentColor"/></svg>
+        Guardadas <span class="cuenta" id="cuenta-fav">0</span>
+      </button>
+      <button class="hamburguesa" id="btn-menu" type="button" aria-label="Abrir menú" aria-expanded="false">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- ===================== BUSCAR ===================== -->
+<section id="v-buscar" data-vista="buscar">
+  <div class="hero">
+    <svg class="curvas" id="curvas" aria-hidden="true" preserveAspectRatio="xMidYMid slice"></svg>
+    <div class="envoltura">
+      <h1>Encuentra dónde vivir mientras estudias</h1>
+      <p class="bajada">Comparamos los arriendos publicados en el Valle de Aburrá, te decimos cuáles están por debajo de su precio justo y te mostramos primero los que encajan con tu universidad, tu presupuesto y lo que más te importa.</p>
+      <form class="frase" id="frase">
+        Estudio en <label class="sr" for="h-uni">Universidad</label><select id="h-uni" required><option>Cargando sedes…</option></select>,
+        puedo pagar hasta <label class="sr" for="h-presu">Presupuesto mensual</label><input id="h-presu" inputmode="numeric" value="$ 2.000.000"> al mes
+        y quiero vivir a máximo <label class="sr" for="h-dist">Distancia</label><select id="h-dist">
+          <option value="1">1 km</option><option value="2">2 km</option><option value="3" selected>3 km</option>
+          <option value="5">5 km</option><option value="8">8 km</option><option value="12">12 km</option></select> de mi sede.
+        <div class="accion">
+          <button class="btn btn-primario" type="submit">Ver mis opciones</button>
+          <span>Después puedes afinar tipo de vivienda, habitaciones y prioridades.</span>
+        </div>
+      </form>
+      <div class="confianza" id="confianza"></div>
+    </div>
+  </div>
+
+  <div class="envoltura app" id="app">
+    <!-- Filtros -->
+    <aside class="filtros" id="filtros" aria-label="Filtros de búsqueda">
+      <div class="filtros-cab"><h2>Afina tu búsqueda</h2><button type="button" id="btn-restablecer">Restablecer</button></div>
+
+      <div class="grupo">
+        <h3>Lo indispensable</h3>
+        <div class="campo"><label for="f-uni">Universidad y sede</label><select id="f-uni"></select></div>
+        <div class="campo"><label for="f-presu">Presupuesto máximo <b id="o-presu"></b></label>
+          <input type="range" id="f-presu" min="500000" max="15000000" step="50000" value="2000000"></div>
+        <div class="campo"><label for="f-dist">Distancia máxima a tu sede <b id="o-dist"></b></label>
+          <input type="range" id="f-dist" min="0.5" max="15" step="0.5" value="3"></div>
+      </div>
+
+      <div class="grupo">
+        <h3>¿Qué tipo de vivienda?</h3>
+        <div class="chips" id="f-tipos"></div>
+        <div class="campo" style="margin-top:14px"><span class="etq">Habitaciones</span>
+          <div class="segmentado" id="f-hab" role="group" aria-label="Habitaciones mínimas">
+            <button type="button" data-v="0">Todas</button><button type="button" data-v="1" aria-pressed="true">1+</button>
+            <button type="button" data-v="2">2+</button><button type="button" data-v="3">3+</button></div></div>
+      </div>
+
+      <div class="grupo">
+        <h3>¿Qué es lo más importante para ti?</h3>
+        <div class="presets" id="presets"></div>
+        <details class="ajuste" id="ajuste"><summary>Ajustar cada prioridad</summary>
+          <div class="pesos" id="pesos"></div>
+          <p class="nota">0 no me importa, 5 es decisivo. El orden de los resultados combina estas prioridades.</p>
+        </details>
+      </div>
+
+      <div class="grupo">
+        <h3>Municipios</h3>
+        <div class="chips" id="f-mun"></div>
+        <p class="nota">Si no eliges ninguno, buscamos en todo el valle.</p>
+      </div>
+
+      <div class="grupo">
+        <h3>Más opciones</h3>
+        <label class="interruptor"><input type="checkbox" id="f-favs"> <span>Afinar con mis guardadas<br><small style="color:var(--tinta-3)">Sube las viviendas parecidas a las que guardaste.</small></span></label>
+        <label class="interruptor" style="margin-top:12px"><input type="checkbox" id="f-atip"> <span>Incluir precios por verificar<br><small style="color:var(--tinta-3)">Anuncios muy lejos de su precio justo: suelen ser errores del anuncio.</small></span></label>
+      </div>
+      <div class="filtros-pie"><button class="btn btn-primario" type="button" id="btn-aplicar" style="width:100%;justify-content:center">Ver resultados</button></div>
+    </aside>
+
+    <!-- Resultados -->
+    <section aria-live="polite">
+      <div class="res-cab">
+        <div><h2 id="res-tit">Tus opciones</h2><p id="res-sub">Completa la frase de arriba para empezar.</p></div>
+        <div class="res-herr">
+          <button class="mini btn-filtros" type="button" id="btn-abrir-filtros">Filtros</button>
+          <label class="sr" for="orden">Ordenar por</label>
+          <select id="orden">
+            <option value="puntaje">Mejor para ti</option><option value="precio">Menor precio</option>
+            <option value="dist_univ_km">Más cerca de tu sede</option><option value="diferencia_pct">Mayor descuento</option>
+            <option value="indice_seguridad">Zona más segura</option><option value="area_m2">Más amplia</option>
+          </select>
+        </div>
+      </div>
+      <div class="embudo oculto" id="embudo"></div>
+      <div class="lista" id="lista"></div>
+    </section>
+
+    <!-- Mapa -->
+    <div class="columna-mapa">
+      <div id="mapa" role="region" aria-label="Mapa de resultados"></div>
+      <div class="leyenda"><span><i style="background:var(--ganga)"></i>Ganga</span><span><i style="background:var(--pino)"></i>Precio justo</span>
+        <span><i style="background:var(--caro)"></i>Caro</span><span><i style="background:var(--tinta)"></i>Otras</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== MERCADO ===================== -->
+<section id="v-mercado" data-vista="mercado" class="oculto">
+  <div class="envoltura pagina">
+    <div class="pagina-cab"><h1>Así está el arriendo en el valle</h1>
+      <p>Cifras calculadas sobre todos los anuncios analizados. Sirven para saber qué esperar antes de buscar: dónde alcanza tu presupuesto y qué tan común es encontrar una ganga.</p></div>
+    <div class="dos">
+      <div class="bloque"><h2>Precio mediano por municipio</h2><p class="sub">Arriendo mensual del anuncio típico (municipios con al menos 20 anuncios).</p><div class="barras" id="m-mun"></div></div>
+      <div class="bloque"><h2>¿Cuántos anuncios hay en cada rango de precio?</h2><p class="sub">En amarillo, los rangos que suelen estar al alcance de un estudiante.</p><div class="barras" id="m-rangos"></div></div>
+    </div>
+    <div class="bloque" style="margin-bottom:18px"><h2>Oferta alrededor de cada universidad</h2>
+      <p class="sub">Anuncios a menos de 2 km en línea recta de cada sede y cuántos cuestan $2.000.000 o menos.</p>
+      <div class="desplaza"><table class="tabla" id="m-unis"></table></div></div>
+    <div class="dos">
+      <div class="bloque"><h2>¿Qué tan seguido hay gangas?</h2><p class="sub">Cada anuncio comparado con su precio justo estimado.</p><div id="m-clases"></div></div>
+      <div class="bloque"><h2>Por tipo de vivienda</h2><p class="sub">Las habitaciones casi no se publican en este portal: es una limitación del mercado en línea, no del sistema.</p>
+        <div class="desplaza"><table class="tabla" id="m-tipos"></table></div></div>
+    </div>
+    <div class="bloque"><h2>Los cinco segmentos del mercado</h2>
+      <p class="sub">Grupos de viviendas parecidas en precio, tamaño, estrato, cercanía y seguridad, encontrados automáticamente con K-means. El mercado es más un continuo que grupos separados, así que úsalos como referencia.</p>
+      <div class="segmentos" id="m-seg"></div></div>
+  </div>
+</section>
+
+<!-- ===================== CÓMO FUNCIONA ===================== -->
+<section id="v-como-funciona" data-vista="como-funciona" class="oculto">
+  <div class="envoltura pagina">
+    <div class="pagina-cab"><h1>Cómo funciona ViviU</h1>
+      <p>De los anuncios en internet a una recomendación explicada. Todo el proceso es automático y se puede repetir para renovar los datos. Las cifras de esta página se leen de los resultados reales del modelo.</p></div>
+
+    <div class="etapas">
+      <div class="etapa"><div><h2>Recolectamos anuncios y datos de ciudad</h2>
+        <p>Un programa recorre los anuncios públicos de arriendo de Finca Raíz en los 10 municipios del valle y guarda solo los datos del inmueble, nunca los de personas. Se suman estadísticas de delitos de la Policía Nacional, población del DANE, límites de comunas y barrios de la Alcaldía de Medellín, y estaciones del Metro, parques y comercios de OpenStreetMap.</p></div>
+        <div class="dato"><b id="c-viv">–</b>anuncios analizados</div></div>
+      <div class="etapa"><div><h2>Limpiamos y verificamos</h2>
+        <p>14 reglas documentadas corrigen o descartan datos imposibles: precios fuera de rango, áreas absurdas, estratos de relleno, municipios mal escritos o coordenadas fuera del valle. Cada anuncio se ubica en su municipio y comuna reales cruzando sus coordenadas con los mapas oficiales.</p></div>
+        <div class="dato"><b>14</b>reglas de limpieza con su impacto medido</div></div>
+      <div class="etapa"><div><h2>Describimos el entorno de cada vivienda</h2>
+        <p>Para cada anuncio calculamos la distancia a las 25 sedes universitarias, al Metro y a parques, los comercios a 500 m y un índice de seguridad con tasas por cada 100.000 habitantes de hurtos y homicidios en su comuna o municipio.</p></div>
+        <div class="dato"><b>25</b>sedes universitarias georreferenciadas</div></div>
+      <div class="etapa"><div><h2>Estimamos el precio justo</h2>
+        <p>Una red neuronal con embeddings (vectores aprendidos para barrio, comuna, municipio y tipo) y un modelo XGBoost aprenden cuánto vale un arriendo según sus características y su entorno. Su promedio es el precio justo. Cada vivienda se valora con un modelo que nunca la vio (validación cruzada de 5 particiones), para que la comparación sea honesta.</p></div>
+        <div class="dato"><b id="c-err">–</b>error típico del precio justo</div></div>
+      <div class="etapa"><div><h2>Clasificamos el precio</h2>
+        <p>Un anuncio es ganga si cuesta claramente menos que su precio justo y caro si cuesta claramente más. El umbral no es una opinión: es el error típico del propio modelo. Si la diferencia es enorme, lo marcamos como precio por verificar.</p></div>
+        <div class="dato"><b id="c-umbral">–</b>por debajo del precio justo para ser ganga</div></div>
+      <div class="etapa"><div><h2>Recomendamos y explicamos</h2>
+        <p>Primero se aplican tus condiciones obligatorias (presupuesto, distancia, tipo, habitaciones). Luego cada opción se puntúa según tus prioridades, comparándola con las demás opciones que cumplen. "Más como esta" usa un vector de contenido que combina lo que aprendió la red con las características de la vivienda.</p></div>
+        <div class="dato"><b>10</b>criterios que puedes priorizar</div></div>
+    </div>
+
+    <div class="bloque" style="margin-bottom:18px"><h2>Arquitectura de la red neuronal</h2>
+      <p class="sub">Perceptrón multicapa en PyTorch, entrenado en GPU. Las variables categóricas entran como embeddings; la última capa oculta es el vector de contenido que usa el recomendador.</p>
+      <div class="arquitectura" id="arq"></div></div>
+
+    <div class="dos">
+      <div class="bloque"><h2>Precisión en datos nunca vistos</h2>
+        <p class="sub">Conjunto de prueba (15 % de los anuncios, separado por grupos para que ninguna copia de un anuncio quede en entrenamiento y prueba).</p>
+        <div class="desplaza"><table class="tabla" id="t-modelos"></table></div>
+        <p class="sub" style="margin:12px 0 0">R² de log(precio): proporción de la variación de precios que explica el modelo. Error típico: error porcentual mediano.</p></div>
+      <div class="bloque"><h2>Cómo aprendió la red</h2>
+        <p class="sub">Error por época en entrenamiento y validación. El entrenamiento se detiene solo cuando la validación deja de mejorar (early stopping) y se guarda la mejor época.</p>
+        <div id="curva"></div></div>
+    </div>
+
+    <div class="bloque" style="margin-bottom:18px"><h2>¿El vector de la red mejora "Más como esta"?</h2>
+      <p class="sub">Para 1.000 viviendas buscamos sus 10 más parecidas con cada representación y medimos si de verdad se parecen. El híbrido es el que usa ViviU.</p>
+      <div class="desplaza"><table class="tabla" id="t-vectores"></table></div></div>
+
+    <div class="bloque"><h2>Herramientas y conceptos</h2>
+      <p class="sub">Qué se usó en cada parte del sistema y para qué.</p>
+      <div class="desplaza"><table class="tabla" id="t-herr"></table></div></div>
+  </div>
+</section>
+
+<!-- ===================== DATOS Y LÍMITES ===================== -->
+<section id="v-datos" data-vista="datos" class="oculto">
+  <div class="envoltura pagina">
+    <div class="pagina-cab"><h1>Datos, límites y privacidad</h1>
+      <p>Una recomendación solo es confiable si sabes de dónde sale y hasta dónde llega. Esto es lo que ViviU sabe y lo que no.</p></div>
+    <div class="dos">
+      <div class="bloque"><h2>Fuentes</h2>
+        <ul class="lista-limpia">
+          <li><b>Finca Raíz:</b> anuncios públicos de arriendo (precio, área, habitaciones, baños, estrato, amenidades, ubicación).</li>
+          <li><b>Policía Nacional:</b> hurtos a personas, residencias, motos y carros, y homicidios intencionales por municipio.</li>
+          <li><b>Alcaldía de Medellín (MEData y geoportal):</b> delitos por comuna, límites de comunas y barrios, población.</li>
+          <li><b>DANE:</b> proyecciones de población municipal para calcular tasas.</li>
+          <li><b>OpenStreetMap:</b> estaciones del Metro, parques, supermercados y farmacias.</li>
+        </ul></div>
+      <div class="bloque"><h2>Lo que debes tener en cuenta</h2>
+        <ul class="lista-limpia">
+          <li><b>El precio justo es una estimación.</b> Su error típico ronda el 11 %; revisa siempre el anuncio y visita la vivienda.</li>
+          <li><b>Una ganga puede tener una razón</b> que el anuncio no cuenta: estado del inmueble, ruido o datos mal escritos.</li>
+          <li><b>La seguridad (0 a 100) es relativa.</b> Ubica la comuna o municipio entre las 30 zonas del valle según hurtos y homicidios por habitante: 100 es la zona con menos delitos, 0 la que más tiene. Se mide por zona, no por cuadra, y los delitos no denunciados no aparecen.</li>
+          <li><b>Casi no hay habitaciones publicadas</b> en el portal; por eso no les damos precio justo.</li>
+          <li><b>Las distancias son en línea recta</b> y algunas inmobiliarias publican coordenadas aproximadas.</li>
+          <li><b>Los anuncios cambian a diario:</b> puede que uno ya no esté disponible.</li>
+        </ul></div>
+    </div>
+    <div class="dos">
+      <div class="bloque"><h2>Privacidad</h2>
+        <p style="margin:0;color:var(--tinta-2)">ViviU no guarda nombres, teléfonos ni correos de quienes publican (Ley 1581 de 2012 de protección de datos). Tus búsquedas no se guardan en ningún servidor: las viviendas que marcas como guardadas viven solo en tu navegador.</p></div>
+      <div class="bloque"><h2>Sobre el proyecto</h2>
+        <p style="margin:0;color:var(--tinta-2)">Proyecto académico del curso de Deep Learning, Ingeniería de Sistemas Cibernéticos, Universidad de San Buenaventura Medellín. Desarrollado por José Miguel Rico Acosta. Código en <a href="https://github.com/Mirep68/vivienda-estudiantil" target="_blank" rel="noopener">GitHub</a>; la API está documentada en <a href="/docs">/docs</a>.</p></div>
+    </div>
+    <div class="bloque" style="margin-top:18px"><h2>Términos de uso</h2>
+      <ul class="lista-limpia">
+        <li><b>Es una herramienta académica de orientación.</b> El precio justo, la clasificación, el índice de seguridad y las recomendaciones son estimaciones de modelos estadísticos; no son asesoría inmobiliaria, financiera ni de seguridad.</li>
+        <li><b>Verifica todo antes de decidir.</b> Confirma precio, estado y condiciones directamente con quien publica el anuncio y visita la vivienda.</li>
+        <li><b>Los anuncios pertenecen a sus anunciantes</b> y a Finca Raíz; ViviU solo enlaza al original y no muestra fotos ni datos de contacto.</li>
+        <li><b>No uses las cifras para señalar barrios o personas.</b> El índice de seguridad describe tasas oficiales por zona, con subregistro, y no dice nada de quienes viven allí.</li>
+        <li><b>El código y el diseño de ViviU son obra de su autor</b> y están protegidos por derechos de autor; no se permite copiarlos ni usarlos comercialmente sin autorización.</li>
+      </ul></div>
+  </div>
+</section>
+</main>
+
+<footer class="pie"><div class="envoltura">
+  <span>© 2026 José Miguel Rico Acosta. Todos los derechos reservados. <b>ViviU</b> es un proyecto académico de la Universidad de San Buenaventura Medellín.</span>
+  <span id="pie-datos">Anuncios de Finca Raíz; datos de Policía Nacional, DANE, Alcaldía de Medellín y OpenStreetMap.</span>
+</div></footer>
+
+<div class="velo oculto" id="velo"></div>
+<aside class="detalle" id="detalle" aria-label="Detalle de la vivienda" aria-hidden="true"></aside>
+
+<script>
+/* ===== Utilidades ======================================================================= */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = t => String(t ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const cop = n => n == null ? "–" : new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(n);
+const copCorto = n => n >= 1e6 ? `$${(n / 1e6).toLocaleString("es-CO", { maximumFractionDigits: 1 })} M` : cop(n);
+const num = (x, d = 0) => (x == null || Number.isNaN(+x)) ? "–" : Number(x).toLocaleString("es-CO", { maximumFractionDigits: d });
+const api = async (ruta, op) => { const r = await fetch(ruta, op); const d = await r.json().catch(() => ({})); if (!r.ok) throw new Error(d.detail || `Error ${r.status}`); return d; };
+const almacen = { leer(k, def) { try { return JSON.parse(localStorage.getItem(k)) ?? def; } catch { return def; } },
+                  escribir(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
+const ICON = {
+  area: '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z M4 9h5V4" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  cama: '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7M3 14h18M7 9V6h4v3" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  bano: '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12h16v2a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5zM6 12V6a2 2 0 0 1 4 0" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
+  uni: '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 9l10-5 10 5-10 5zM6 11v5c3 2 9 2 12 0v-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  escudo: '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>',
+  metro: '<svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="14" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M8 21l2-4M16 21l-2-4M5 11h14" stroke="currentColor" stroke-width="2"/></svg>',
+};
+const SELLO = { ganga: "Ganga", justo: "Precio justo", caro: "Caro", atipico: "Precio por verificar", sin_valoracion: "Sin valoración" };
+const COLOR_PIN = { ganga: "#1C7C3C", justo: "#1E5B4F", caro: "#A65300" };
+const CRIT = { cercania: "Cercanía a tu sede", seguridad: "Seguridad de la zona", precio: "Precio bajo", valor: "Buen precio vs. su valor",
+  espacio: "Espacio", metro: "Metro cerca", parques: "Parques cerca", servicios: "Supermercados y farmacias", amenidades: "Amenidades" };
+const PRESETS = {
+  equilibrado: { t: "Equilibrado", d: "Un poco de todo", w: { cercania: 3, seguridad: 3, precio: 3, valor: 3, espacio: 1, metro: 1 },
+    i: '<path d="M4 12h16M12 4v16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>' },
+  seguridad: { t: "Seguridad primero", d: "Zonas más seguras, aunque cuesten algo más", w: { seguridad: 5, cercania: 3, valor: 2, precio: 2 },
+    i: '<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z" fill="none" stroke="currentColor" stroke-width="2"/>' },
+  cerca: { t: "Cerca de clase", d: "Caminar a la universidad o tener Metro", w: { cercania: 5, metro: 2, seguridad: 2, precio: 2 },
+    i: '<path d="M2 9l10-5 10 5-10 5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>' },
+  barato: { t: "Lo más económico", d: "Que sobre plata a fin de mes", w: { precio: 5, valor: 3, cercania: 2 },
+    i: '<circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 8v8M9.5 10.5c0-1 1-1.5 2.5-1.5s2.5.6 2.5 1.5-1 1.3-2.5 1.5-2.5.6-2.5 1.5 1 1.5 2.5 1.5 2.5-.5 2.5-1.5" fill="none" stroke="currentColor" stroke-width="1.6"/>' },
+  negocio: { t: "Mejor negocio", d: "Lo más barato para lo que ofrece", w: { valor: 5, precio: 2, espacio: 2, seguridad: 2 },
+    i: '<path d="M4 17l5-5 4 4 7-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>' },
+};
+const TIPOS = ["Apartaestudio", "Apartamento", "Casa", "Habitación"];
+
+/* ===== Estado ============================================================================ */
+const E = {
+  unis: [], resumen: null, uni: "USB", presu: 2000000, dist: 3, hab: 1, tipos: ["Apartaestudio", "Apartamento", "Habitación"],
+  municipios: [], preset: "seguridad", pesos: { ...PRESETS.seguridad.w }, atip: false, usarFavs: false,
+  resultados: [], embudo: null, uniInfo: null, orden: "puntaje", guardadas: almacen.leer("viviu-guardadas", {}), vistas: {},
+};
+
+/* ===== Enrutamiento por secciones ======================================================== */
+function irA() {
+  const ruta = (location.hash || "#buscar").slice(1);
+  const valida = $$("[data-vista]").some(v => v.dataset.vista === ruta) ? ruta : "buscar";
+  $$("[data-vista]").forEach(v => v.classList.toggle("oculto", v.dataset.vista !== valida));
+  $$("nav.menu a").forEach(a => a.dataset.ruta === valida ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current"));
+  $("#menu").classList.remove("abierto"); $("#btn-menu").setAttribute("aria-expanded", "false");
+  if (valida === "buscar" && mapa) setTimeout(() => mapa.invalidateSize(), 50);
+  if (valida === "mercado") cargarMercado();
+  if (valida === "como-funciona") cargarMetodologia();
+  window.scrollTo({ top: 0 });
+}
+window.addEventListener("hashchange", irA);
+$("#btn-menu").addEventListener("click", () => { const m = $("#menu"); m.classList.toggle("abierto"); $("#btn-menu").setAttribute("aria-expanded", m.classList.contains("abierto")); });
+
+/* ===== Curvas de nivel del valle (decoración del hero) ================================== */
+(function curvas() {
+  const svg = $("#curvas"), W = 1440, H = 520; svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+  let d = "";
+  for (let k = 1; k <= 14; k++) {
+    const pts = [];
+    for (let a = 0; a <= 360; a += 6) {
+      const r = a * Math.PI / 180, ruido = 1 + 0.12 * Math.sin(3 * r + k * 0.7) + 0.07 * Math.cos(5 * r - k);
+      pts.push([1060 + Math.cos(r) * k * 62 * ruido * 1.5, 300 + Math.sin(r) * k * 30 * ruido]);
+    }
+    d += `<path d="M${pts.map(p => p.map(v => v.toFixed(1)).join(",")).join("L")}Z" fill="none" stroke="rgba(255,255,255,${k % 4 === 0 ? .14 : .07})" stroke-width="${k % 4 === 0 ? 1.4 : 1}"/>`;
+  }
+  svg.innerHTML = d;
+})();
+
+/* ===== Formularios ======================================================================= */
+$("#f-tipos").innerHTML = TIPOS.map(t => `<label class="chip"><input type="checkbox" value="${t}" ${E.tipos.includes(t) ? "checked" : ""}>${t}</label>`).join("");
+$("#presets").innerHTML = Object.entries(PRESETS).map(([k, p]) =>
+  `<button type="button" class="preset" data-p="${k}" aria-pressed="${k === E.preset}"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">${p.i}</svg><b>${p.t}</b><span>${p.d}</span></button>`).join("");
+$("#pesos").innerHTML = Object.entries(CRIT).map(([k, n]) =>
+  `<div class="peso"><label for="w-${k}">${n}</label><input type="range" id="w-${k}" min="0" max="5" step="1" value="${E.pesos[k] || 0}"><output id="ow-${k}">${E.pesos[k] || 0}</output></div>`).join("");
+
+function sincronizar() {
+  $("#o-presu").textContent = cop(E.presu); $("#o-dist").textContent = `${num(E.dist, 1)} km`;
+  $("#f-presu").value = E.presu; $("#f-dist").value = E.dist; $("#h-presu").value = cop(E.presu);
+  const op = [...$("#h-dist").options].find(o => +o.value === E.dist); if (op) $("#h-dist").value = op.value;
+  if (E.unis.length) { $("#f-uni").value = E.uni; $("#h-uni").value = E.uni; }
+  $$("#f-hab button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.v === E.hab));
+  $$(".preset").forEach(b => b.setAttribute("aria-pressed", b.dataset.p === E.preset));
+  Object.keys(CRIT).forEach(k => { $(`#w-${k}`).value = E.pesos[k] || 0; $(`#ow-${k}`).textContent = E.pesos[k] || 0; });
+  $("#cuenta-fav").textContent = Object.keys(E.guardadas).length;
+}
+let temporizador;
+const buscarPronto = () => { clearTimeout(temporizador); temporizador = setTimeout(buscar, 350); };
+
+$("#frase").addEventListener("submit", e => {
+  e.preventDefault();
+  E.uni = $("#h-uni").value; E.dist = +$("#h-dist").value;
+  const p = +$("#h-presu").value.replace(/\D/g, ""); if (p > 0) E.presu = p;
+  sincronizar(); buscar(); $("#app").scrollIntoView({ behavior: "smooth" });
+});
+$("#h-presu").addEventListener("focus", e => e.target.select());
+$("#h-presu").addEventListener("blur", e => { const p = +e.target.value.replace(/\D/g, ""); if (p > 0) E.presu = p; sincronizar(); });
+$("#f-uni").addEventListener("change", e => { E.uni = e.target.value; sincronizar(); buscarPronto(); });
+$("#f-presu").addEventListener("input", e => { E.presu = +e.target.value; sincronizar(); buscarPronto(); });
+$("#f-dist").addEventListener("input", e => { E.dist = +e.target.value; sincronizar(); buscarPronto(); });
+$("#f-tipos").addEventListener("change", () => { E.tipos = $$("#f-tipos input:checked").map(i => i.value); buscarPronto(); });
+$("#f-mun").addEventListener("change", () => { E.municipios = $$("#f-mun input:checked").map(i => i.value); buscarPronto(); });
+$("#f-hab").addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; E.hab = +b.dataset.v; sincronizar(); buscarPronto(); });
+$("#presets").addEventListener("click", e => { const b = e.target.closest(".preset"); if (!b) return; E.preset = b.dataset.p; E.pesos = { ...PRESETS[E.preset].w }; sincronizar(); buscarPronto(); });
+$("#pesos").addEventListener("input", e => { const k = e.target.id.replace("w-", ""); E.pesos[k] = +e.target.value; E.preset = null; sincronizar(); buscarPronto(); });
+$("#f-atip").addEventListener("change", e => { E.atip = e.target.checked; buscarPronto(); });
+$("#f-favs").addEventListener("change", e => { E.usarFavs = e.target.checked; buscarPronto(); });
+$("#orden").addEventListener("change", e => { E.orden = e.target.value; pintarLista(); });
+$("#btn-restablecer").addEventListener("click", () => {
+  Object.assign(E, { presu: 2000000, dist: 3, hab: 1, tipos: ["Apartaestudio", "Apartamento", "Habitación"], municipios: [], preset: "seguridad",
+                     pesos: { ...PRESETS.seguridad.w }, atip: false, usarFavs: false });
+  $$("#f-tipos input").forEach(i => i.checked = E.tipos.includes(i.value)); $$("#f-mun input").forEach(i => i.checked = false);
+  $("#f-atip").checked = false; $("#f-favs").checked = false; sincronizar(); buscar();
+});
+const abrirFiltros = v => { $("#filtros").classList.toggle("abierto", v); $("#velo").classList.toggle("oculto", !v); };
+$("#btn-abrir-filtros").addEventListener("click", () => abrirFiltros(true));
+$("#btn-aplicar").addEventListener("click", () => abrirFiltros(false));
+$("#velo").addEventListener("click", () => { abrirFiltros(false); cerrarDetalle(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") { cerrarDetalle(); abrirFiltros(false); } });
+
+/* ===== Mapa ============================================================================== */
+let mapa = null, capaRes = null, capaUni = null, pins = {};
+try {
+  mapa = L.map("mapa", { scrollWheelZoom: false }).setView([6.2476, -75.5658], 12);
+  L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+    { attribution: "Mapa &copy; Esri", maxZoom: 18 }).addTo(mapa);
+  capaRes = L.layerGroup().addTo(mapa); capaUni = L.layerGroup().addTo(mapa);
+} catch (e) { $("#mapa").innerHTML = '<div class="vacio" style="height:100%">No se pudo cargar el mapa. Revisa tu conexión a internet.</div>'; }
+const iconoPin = (n, clase, activo) => L.divIcon({ className: "", iconSize: [28, 28], iconAnchor: [14, 28],
+  html: `<div class="pin ${activo ? "activo" : ""}" style="background:${COLOR_PIN[clase] || "#16232E"}"><span>${n}</span></div>` });
+
+/* ===== Búsqueda ========================================================================== */
+async function buscar() {
+  if (!E.unis.length) return;
+  const cuerpo = { universidad: E.uni, presupuesto_max: E.presu, distancia_max_km: E.dist, habitaciones_min: E.hab,
+    tipos: E.tipos.length ? E.tipos : TIPOS, municipios: E.municipios.length ? E.municipios : null, incluir_atipicos: E.atip,
+    pesos: E.pesos, me_gustan: E.usarFavs ? Object.keys(E.guardadas) : [], n: 30 };
+  $("#lista").classList.add("cargando");
+  try {
+    const d = await api("/api/recomendar", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(cuerpo) });
+    E.resultados = d.resultados; E.embudo = d.embudo; E.uniInfo = d.universidad;
+    d.resultados.forEach((v, i) => { v._pos = i + 1; E.vistas[v.id] = v; });
+    pintarEmbudo(); pintarLista(); pintarMapa();
+  } catch (err) {
+    $("#lista").innerHTML = `<div class="vacio"><h3>No pudimos buscar</h3><p>${esc(err.message)}. Verifica que la API esté encendida e intenta de nuevo.</p></div>`;
+  } finally { $("#lista").classList.remove("cargando"); }
+}
+
+function pintarEmbudo() {
+  const e = E.embudo, u = E.uniInfo;
+  const pasos = [["Anuncios", e.total], ["En tu presupuesto", e.presupuesto], [`A ${num(E.dist, 1)} km o menos`, e.distancia],
+                 ["Con tus condiciones", e.sin_atipicos], ["Opciones únicas", e.sin_repetidos]];
+  $("#embudo").innerHTML = pasos.map(([t, v]) => `<div><b>${num(v)}</b>${t}<i style="width:${Math.max(3, v / e.total * 100)}%"></i></div>`).join("");
+  $("#embudo").classList.remove("oculto");
+  const n = E.resultados.length;
+  $("#res-tit").textContent = n ? `${num(e.sin_repetidos)} opciones para ti` : "Sin opciones con estas condiciones";
+  $("#res-sub").textContent = n ? `Cerca de ${u ? `${u.nombre} (${u.sede})` : "tu sede"}. Te mostramos las ${n} que mejor encajan con tus prioridades.`
+                                : "Prueba subir el presupuesto, ampliar la distancia o permitir otros tipos de vivienda.";
+}
+
+function ordenados() {
+  const r = [...E.resultados], k = E.orden;
+  const asc = ["precio", "dist_univ_km", "diferencia_pct"].includes(k);
+  return k === "puntaje" ? r : r.sort((a, b) => ((a[k] ?? (asc ? 1e12 : -1e12)) - (b[k] ?? (asc ? 1e12 : -1e12))) * (asc ? 1 : -1));
+}
+
+function lineaPrecio(v) {
+  if (v.precio_justo == null || ["atipico", "sin_valoracion"].includes(v.clase_precio)) return "";
+  const d = v.diferencia_pct;
+  return `<small>Precio justo ${copCorto(v.precio_justo)} (${d < 0 ? `${num(-d)} % menos` : `${num(d)} % más`})</small>`;
+}
+
+function tarjeta(v) {
+  const guardada = !!E.guardadas[v.id];
+  return `<article class="tarjeta" data-id="${esc(v.id)}" tabindex="0" aria-label="${esc(v.tipo_inmueble)} en ${esc(v.barrio || v.municipio)}, ${cop(v.precio)}">
+    <div><div class="t-tit"><span class="t-pos">${v._pos}</span>${esc(v.tipo_inmueble)} <span class="sello s-${esc(v.clase_precio)}">${SELLO[v.clase_precio] || ""}</span></div>
+      <div class="t-lugar">${esc(v.barrio || "")}${v.barrio ? ", " : ""}${esc(v.municipio)}</div></div>
+    <div class="t-precio">${cop(v.precio)}${lineaPrecio(v)}</div>
+    <div class="t-datos">
+      <span>${ICON.area}${num(v.area_m2)} m²</span><span>${ICON.cama}${num(v.habitaciones)} hab.</span><span>${ICON.bano}${num(v.banos)} ${v.banos == 1 ? "baño" : "baños"}</span>
+      <span>${ICON.uni}${num(v.dist_univ_km, 1)} km a tu sede</span><span>${ICON.escudo}Seguridad ${num(v.indice_seguridad)}/100</span>
+      <span>${ICON.metro}Metro a ${num(v.dist_metro_km, 1)} km</span></div>
+    ${v.por_que ? `<div class="t-porque"><strong>Por qué te la mostramos:</strong> ${esc(v.por_que)}.</div>` : ""}
+    <div class="t-acc">
+      <button type="button" class="mini" data-accion="detalle">Ver detalle</button>
+      <button type="button" class="mini ${guardada ? "guardada" : ""}" data-accion="guardar" aria-pressed="${guardada}">${guardada ? "Guardada" : "Guardar"}</button>
+      <a class="mini" href="${esc(v.url)}" target="_blank" rel="noopener" data-accion="enlace">Ver anuncio</a>
+    </div></article>`;
+}
+
+function pintarLista() {
+  const lista = $("#lista");
+  if (!E.resultados.length) {
+    lista.innerHTML = `<div class="vacio"><h3>Ninguna vivienda cumple todo</h3><p>Sube el presupuesto, amplía la distancia o activa más tipos de vivienda en los filtros.</p></div>`;
+    return;
+  }
+  lista.innerHTML = ordenados().map(tarjeta).join("");
+}
+
+$("#lista").addEventListener("click", e => {
+  const t = e.target.closest(".tarjeta"); if (!t) return;
+  const v = E.vistas[t.dataset.id], acc = e.target.closest("[data-accion]")?.dataset.accion;
+  if (acc === "enlace") return;
+  if (acc === "guardar") { alternarGuardada(v); return; }
+  abrirDetalle(v);
+});
+$("#lista").addEventListener("keydown", e => { if (e.key === "Enter" && e.target.classList.contains("tarjeta")) abrirDetalle(E.vistas[e.target.dataset.id]); });
+$("#lista").addEventListener("mouseover", e => { const t = e.target.closest(".tarjeta"); if (t) resaltarPin(t.dataset.id); });
+
+function pintarMapa() {
+  if (!mapa) return;
+  capaRes.clearLayers(); capaUni.clearLayers(); pins = {};
+  const u = E.uniInfo, puntos = [];
+  if (u) {
+    L.circle([u.lat, u.lon], { radius: E.dist * 1000, color: "#1E5B4F", weight: 1.5, dashArray: "5 5", fillColor: "#1E5B4F", fillOpacity: .05 }).addTo(capaUni);
+    L.marker([u.lat, u.lon], { icon: L.divIcon({ className: "", iconSize: [34, 34], iconAnchor: [17, 17],
+      html: `<div style="width:34px;height:34px;border-radius:9px;background:#16232E;display:grid;place-items:center;border:2px solid #F2B705">${ICON.uni.replace('width="14" height="14"', 'width="18" height="18" style="color:#fff"')}</div>` }) })
+      .bindPopup(`<b>${esc(u.nombre)}</b><br>${esc(u.sede)}`).addTo(capaUni);
+    puntos.push([u.lat, u.lon]);
+  }
+  E.resultados.forEach(v => {
+    if (v.lat == null) return;
+    const m = L.marker([v.lat, v.lon], { icon: iconoPin(v._pos, v.clase_precio) })
+      .bindTooltip(`${esc(v.tipo_inmueble)}, ${cop(v.precio)}`).on("click", () => abrirDetalle(v)).addTo(capaRes);
+    pins[v.id] = m; puntos.push([v.lat, v.lon]);
+  });
+  if (puntos.length > 1) mapa.fitBounds(puntos, { padding: [30, 30], maxZoom: 15 });
+}
+function resaltarPin(id) {
+  Object.entries(pins).forEach(([k, m]) => { const v = E.vistas[k]; m.setIcon(iconoPin(v._pos, v.clase_precio, k === id)); m.setZIndexOffset(k === id ? 1000 : 0); });
+  $$(".tarjeta").forEach(t => t.classList.toggle("activa", t.dataset.id === id));
+}
+
+/* ===== Guardadas ========================================================================= */
+function alternarGuardada(v) {
+  if (E.guardadas[v.id]) delete E.guardadas[v.id];
+  else E.guardadas[v.id] = (({ id, url, municipio, barrio, tipo_inmueble, precio, precio_justo, diferencia_pct, clase_precio, area_m2, habitaciones, banos, dist_univ_km, indice_seguridad, lat, lon }) =>
+                            ({ id, url, municipio, barrio, tipo_inmueble, precio, precio_justo, diferencia_pct, clase_precio, area_m2, habitaciones, banos, dist_univ_km, indice_seguridad, lat, lon }))(v);
+  almacen.escribir("viviu-guardadas", E.guardadas); sincronizar();
+  $$(`.tarjeta[data-id="${CSS.escape(v.id)}"] [data-accion="guardar"]`).forEach(b => {
+    const g = !!E.guardadas[v.id]; b.classList.toggle("guardada", g); b.textContent = g ? "Guardada" : "Guardar"; b.setAttribute("aria-pressed", g); });
+  const bd = $("#d-guardar"); if (bd && bd.dataset.id === v.id) bd.textContent = E.guardadas[v.id] ? "Guardada" : "Guardar";
+  if (E.usarFavs) buscarPronto();
+}
+$("#btn-favoritas").addEventListener("click", () => {
+  const g = Object.values(E.guardadas);
+  abrirPanel(`<div class="d-cab"><div><h2>Tus guardadas</h2><p>${g.length ? `${g.length} vivienda(s). Se guardan solo en este navegador.` : "Aún no has guardado viviendas."}</p></div>
+    <button class="cerrar" type="button" aria-label="Cerrar" onclick="cerrarDetalle()">×</button></div>
+    <div class="d-cuerpo">${g.length ? `<div class="parecidas">${g.map(v => `
+      <div class="parecida" style="cursor:default"><div><b>${esc(v.tipo_inmueble)} en ${esc(v.barrio || v.municipio)}</b><br>
+        <span>${num(v.area_m2)} m², ${num(v.habitaciones)} hab., a ${num(v.dist_univ_km, 1)} km de la sede elegida</span></div>
+        <div class="p">${cop(v.precio)}<br><a href="${esc(v.url)}" target="_blank" rel="noopener" style="font-size:12.5px">Ver anuncio</a></div></div>`).join("")}</div>
+      <label class="interruptor"><input type="checkbox" ${E.usarFavs ? "checked" : ""} onchange="E.usarFavs=this.checked;$('#f-favs').checked=this.checked;buscarPronto()"><span>Usarlas para afinar mis resultados</span></label>`
+      : `<div class="aviso">Pulsa "Guardar" en cualquier vivienda para tenerla aquí y para que ViviU te muestre otras parecidas.</div>`}</div>`);
+});
+
+/* ===== Detalle =========================================================================== */
+function abrirPanel(html) { const d = $("#detalle"); d.innerHTML = html; d.classList.add("abierto"); d.setAttribute("aria-hidden", "false"); $("#velo").classList.remove("oculto"); d.querySelector(".cerrar")?.focus(); }
+function cerrarDetalle() { const d = $("#detalle"); d.classList.remove("abierto"); d.setAttribute("aria-hidden", "true"); if (!$("#filtros").classList.contains("abierto")) $("#velo").classList.add("oculto"); }
+
+function escalaPrecio(v) {
+  if (v.precio_justo == null || ["atipico", "sin_valoracion"].includes(v.clase_precio)) {
+    return `<div class="aviso">${v.clase_precio === "atipico" ? "Este precio está muy lejos de lo que cuestan viviendas parecidas. Puede ser un error del anuncio: confírmalo con quien publica antes de ilusionarte." : "No hay suficientes anuncios de este tipo para estimar un precio justo confiable."}</div>`;
+  }
+  const min = -40, max = 60, pos = Math.min(100, Math.max(0, (v.diferencia_pct - min) / (max - min) * 100));
+  const g = (-14 - min) / (max - min) * 100, c = (17 - min) / (max - min) * 100;
+  const frase = v.diferencia_pct < 0 ? `cuesta ${num(-v.diferencia_pct)} % menos` : `cuesta ${num(v.diferencia_pct)} % más`;
+  return `<div class="escala"><div class="barra-es"><div class="zonas"><span style="width:${g}%"></span><span style="width:${c - g}%"></span><span style="width:${100 - c}%"></span></div>
+    <div class="marcador" style="left:${pos}%"></div></div>
+    <div class="rotulos"><span>Más barata que lo normal</span><span>Precio justo</span><span>Más cara</span></div>
+    <p>Viviendas con características y entorno parecidos cuestan alrededor de <b>${cop(v.precio_justo)}</b>. Esta ${frase}.</p></div>`;
+}
+
+async function abrirDetalle(v) {
+  resaltarPin(v.id);
+  const amen = (v.amenidades || "").split("|").filter(Boolean);
+  abrirPanel(`<div class="d-cab"><div><h2>${esc(v.tipo_inmueble)} en ${esc(v.barrio || v.municipio)}</h2><p>${esc(v.municipio)}${v.segmento_nombre ? `. Segmento: ${esc(v.segmento_nombre.replace(/^S\d+: /, "").toLowerCase())}` : ""}</p></div>
+      <button class="cerrar" type="button" aria-label="Cerrar" onclick="cerrarDetalle()">×</button></div>
+    <div class="d-cuerpo">
+      <div><div class="d-precio"><b>${cop(v.precio)}</b><span class="sello s-${esc(v.clase_precio)}">${SELLO[v.clase_precio] || ""}</span></div>
+        <div style="color:var(--tinta-3);font-size:13px;margin-top:4px">Arriendo mensual publicado</div>${escalaPrecio(v)}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <a class="btn btn-primario" href="${esc(v.url)}" target="_blank" rel="noopener">Ver anuncio en Finca Raíz</a>
+        <button class="btn btn-borde" type="button" id="d-guardar" data-id="${esc(v.id)}">${E.guardadas[v.id] ? "Guardada" : "Guardar"}</button></div>
+      ${v.por_que ? `<div><h3>Por qué te la recomendamos</h3><p style="margin:0;color:var(--tinta-2)">${esc(v.por_que)}.</p></div>` : ""}
+      <div><h3>La vivienda</h3><div class="rejilla">
+        <div>Área<b>${num(v.area_m2)} m²</b></div><div>Habitaciones<b>${num(v.habitaciones)}</b></div><div>Baños<b>${num(v.banos)}</b></div>
+        <div>Estrato<b>${num(v.estrato)}</b></div><div>Parqueaderos<b>${num(v.parqueaderos)}</b></div><div>Piso<b>${num(v.piso)}</b></div>
+        <div>Antigüedad<b>${esc(v.antiguedad || "–")}</b></div><div>Publica<b>${esc(v.inmobiliaria || "Particular")}</b></div></div></div>
+      <div><h3>El entorno</h3><div class="rejilla">
+        <div>A tu sede<b>${num(v.dist_univ_km, 2)} km</b></div><div>Seguridad (0–100)<b>${num(v.indice_seguridad)}</b></div>
+        <div>Metro más cercano<b>${esc(v.metro_cercano || "–")}</b></div><div>Distancia al Metro<b>${num(v.dist_metro_km, 2)} km</b></div>
+        <div>Parque más cercano<b>${num(v.dist_parque_km, 2)} km</b></div><div>Comercios a 500 m<b>${num(v.servicios_500m)}</b></div></div>
+        <p style="font-size:12.5px;color:var(--tinta-3);margin:8px 0 0">Índice relativo: compara los hurtos y homicidios por cada 100.000 habitantes de esta comuna o municipio con las otras 29 zonas del valle. 100 es la zona con menos delitos, 0 la que tiene más y 50 queda en la mitad. No es una probabilidad de que te pase algo.</p></div>
+      ${amen.length ? `<div><h3>Amenidades publicadas</h3><div class="amenidades">${amen.map(a => `<span>${esc(a)}</span>`).join("")}</div></div>` : ""}
+      <div><h3>Más como esta</h3><div class="parecidas" id="d-parecidas"><div class="aviso">Buscando viviendas parecidas…</div></div>
+        <p style="font-size:12.5px;color:var(--tinta-3);margin:8px 0 0">Elegidas por el vector de contenido de la red neuronal, dentro de tu presupuesto.</p></div>
+    </div>`);
+  $("#d-guardar").addEventListener("click", () => alternarGuardada(v));
+  try {
+    const q = new URLSearchParams({ presupuesto_max: E.presu, universidad: E.uni, n: 5 });
+    const d = await api(`/api/similares/${encodeURIComponent(v.id)}?${q}`);
+    $("#d-parecidas").innerHTML = d.resultados.length ? d.resultados.map(s => { E.vistas[s.id] = { ...s, _pos: "·" }; return `
+      <button type="button" class="parecida" data-id="${esc(s.id)}"><div><b>${esc(s.tipo_inmueble)} en ${esc(s.barrio || s.municipio)}</b><br>
+        <span>${num(s.area_m2)} m², ${num(s.habitaciones)} hab., a ${num(s.dist_univ_km, 1)} km de tu sede</span></div>
+        <div class="p">${cop(s.precio)}<br><span class="sello s-${esc(s.clase_precio)}">${SELLO[s.clase_precio] || ""}</span></div></button>`; }).join("")
+      : `<div class="aviso">No encontramos viviendas parecidas dentro de tu presupuesto.</div>`;
+    $$("#d-parecidas .parecida").forEach(b => b.addEventListener("click", () => abrirDetalle(E.vistas[b.dataset.id])));
+  } catch (err) { $("#d-parecidas").innerHTML = `<div class="aviso">${esc(err.message)}</div>`; }
+}
+
+/* ===== Mercado ============================================================================ */
+let mercadoListo = false;
+async function cargarMercado() {
+  if (mercadoListo) return;
+  try {
+    const m = await api("/api/mercado"); mercadoListo = true;
+    const maxM = Math.max(...m.por_municipio.map(x => x.precio_mediano));
+    $("#m-mun").innerHTML = m.por_municipio.map(x => `<div class="barra-h"><span>${esc(x.municipio)}</span><div class="pista"><i style="width:${x.precio_mediano / maxM * 100}%"></i></div><span class="v">${copCorto(x.precio_mediano)}</span></div>`).join("");
+    const maxR = Math.max(...m.rangos_precio.map(x => x.viviendas));
+    $("#m-rangos").innerHTML = m.rangos_precio.map((x, i) => `<div class="barra-h ${i < 3 ? "estudiante" : ""}"><span>${esc(x.rango)}</span><div class="pista"><i style="width:${x.viviendas / maxR * 100}%"></i></div><span class="v">${num(x.viviendas)}</span></div>`).join("");
+    $("#m-unis").innerHTML = `<thead><tr><th>Universidad</th><th>Sede</th><th class="n">Anuncios a 2 km</th><th class="n">Hasta $2 M</th><th class="n">Precio mediano</th></tr></thead><tbody>` +
+      m.universidades.map(u => `<tr><td>${esc(u.nombre)}</td><td>${esc(u.sede)}</td><td class="n">${num(u.viviendas_2km)}</td><td class="n">${num(u.hasta_2M_2km)}</td><td class="n">${copCorto(u.precio_mediano_2km)}</td></tr>`).join("") + "</tbody>";
+    const orden = ["ganga", "justo", "caro", "atipico", "sin_valoracion"], col = { ganga: "#1C7C3C", justo: "#7C8994", caro: "#A65300", atipico: "#B42318", sin_valoracion: "#C3CBC8" };
+    $("#m-clases").innerHTML = `<div class="apilada">${orden.filter(k => m.clases[k]).map(k => `<span style="width:${m.clases[k]}%;background:${col[k]}" title="${SELLO[k]}">${m.clases[k] > 6 ? `${num(m.clases[k])} %` : ""}</span>`).join("")}</div>
+      <div class="leyenda">${orden.filter(k => m.clases[k]).map(k => `<span><i style="background:${col[k]}"></i>${SELLO[k]}: ${num(m.clases[k], 1)} %</span>`).join("")}</div>
+      <p class="sub" style="margin:12px 0 0">Ganga: al menos 14 % por debajo del precio justo. Caro: al menos 17 % por encima. Son los límites del error típico del modelo.</p>`;
+    $("#m-tipos").innerHTML = `<thead><tr><th>Tipo</th><th class="n">Anuncios</th><th class="n">Precio mediano</th><th class="n">Área mediana</th></tr></thead><tbody>` +
+      m.por_tipo.map(t => `<tr><td>${esc(t.tipo_inmueble)}</td><td class="n">${num(t.viviendas)}</td><td class="n">${copCorto(t.precio_mediano)}</td><td class="n">${num(t.area_mediana)} m²</td></tr>`).join("") + "</tbody>";
+    $("#m-seg").innerHTML = m.segmentos.map(s => `<div class="segmento"><h3>${esc(String(s.nombre).replace(/^S\d+: /, ""))}</h3><dl>
+      <dt>Anuncios</dt><dd>${num(s.viviendas)} (${num(s.pct)} %)</dd><dt>Precio mediano</dt><dd>${copCorto(s.precio_mediano)}</dd>
+      <dt>Área</dt><dd>${num(s.area_mediana)} m²</dd><dt>Estrato</dt><dd>${num(s.estrato)}</dd>
+      <dt>A una universidad</dt><dd>${num(s.km_universidad, 1)} km</dd><dt>Seguridad</dt><dd>${num(s.indice_seguridad)}/100</dd>
+      <dt>Gangas</dt><dd>${num(s.pct_ganga)} %</dd></dl></div>`).join("");
+  } catch (err) { $("#v-mercado .pagina").insertAdjacentHTML("beforeend", `<div class="vacio"><h3>No se pudieron cargar las cifras</h3><p>${esc(err.message)}</p></div>`); }
+}
+
+/* ===== Metodología ======================================================================== */
+let metodologiaLista = false;
+const NOMBRE_VEC = { "red sin estandarizar": "Vector de la red (sin estandarizar)", "red estandarizada": "Vector de la red (estandarizado)",
+  "crudo (variables sin red)": "Solo características, sin red", "híbrido red + crudo": "Híbrido: red + características (ViviU)", "azar": "Al azar (referencia)" };
+const HERRAMIENTAS = [
+  ["Python, VS Code, Git y GitHub", "Todo el desarrollo, control de versiones", "Reproducibilidad, buenas prácticas de ingeniería"],
+  ["requests, regex y JSON de Next.js", "Scraping de anuncios de Finca Raíz", "Recolección automática y renovable, datos crudos inmutables"],
+  ["API Socrata y ArcGIS REST", "Delitos, población y mapas oficiales", "Datos abiertos, paginación de APIs"],
+  ["pandas y NumPy", "Limpieza, imputación y cálculo de variables", "Calidad de datos, valores faltantes, valores atípicos"],
+  ["GeoPandas, OSMnx, Nominatim", "Ubicar cada anuncio en su comuna y medir distancias", "Análisis espacial, sistemas de coordenadas, cruces espaciales"],
+  ["PostgreSQL + PostGIS", "Base de datos relacional y espacial del producto", "Modelo relacional, llaves foráneas, índices espaciales"],
+  ["scikit-learn", "División por grupos, validación cruzada, K-means", "Fuga de datos, evaluación honesta, segmentación"],
+  ["XGBoost (GPU)", "Modelo de referencia del precio", "Gradient boosting, early stopping, línea base"],
+  ["PyTorch (CUDA, RTX 5070)", "Red neuronal con embeddings", "MLP, embeddings, Huber, AdamW, dropout, reducción de tasa de aprendizaje"],
+  ["Ensemble y validación cruzada", "Precio justo de cada anuncio y clasificación", "Promedio de modelos, predicciones out-of-fold, MAD robusta"],
+  ["Recomendador basado en contenido", "Ordenar opciones y 'Más como esta'", "Criterios impuestos y deseados, percentiles, similitud coseno, vectores aprendidos"],
+  ["FastAPI, Uvicorn, Pydantic", "API que conecta el modelo con la web", "Servicios REST, validación de datos, documentación automática"],
+  ["HTML, CSS, JavaScript y Leaflet", "Esta página y su mapa", "Diseño de interfaz, accesibilidad, mapas web"],
+];
+async function cargarMetodologia() {
+  if (metodologiaLista) return;
+  try {
+    const m = await api("/api/metodologia"); metodologiaLista = true;
+    const mod = m.modelos || {}, ens = mod.ensemble_50_50 || {};
+    $("#c-viv").textContent = num(m.viviendas);
+    $("#c-err").textContent = ens["MdAPE_%"] ? `${num(ens["MdAPE_%"], 1)} %` : "–";
+    $("#c-umbral").textContent = m.valoracion?.umbral_ganga_pct ? `${num(-m.valoracion.umbral_ganga_pct)} %` : "–";
+    const hp = mod.hiperparametros || {}, capas = hp.capas || [256, 128, 64];
+    const flecha = '<svg class="flecha" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+    $("#arq").innerHTML = `<div class="capa entrada"><b>58</b>variables numéricas y binarias</div><div class="capa entrada"><b>5</b>embeddings: barrio (16), comuna, municipio, tipo, estado</div>${flecha}` +
+      capas.map((c, i) => `<div class="capa oculta"><b>${c}</b>neuronas ReLU${i === capas.length - 1 ? ", vector de contenido" : ""}<br>dropout ${hp.dropout ?? ""}</div>${flecha}`).join("") +
+      `<div class="capa salida"><b>1</b>log(precio)</div>`;
+    const filas = [["Línea base (mediana por municipio, tipo y estrato)", mod.linea_base], ["XGBoost", mod.xgboost], ["Red neuronal", mod.red_neuronal], ["Red + XGBoost (precio justo de ViviU)", mod.ensemble_50_50]];
+    $("#t-modelos").innerHTML = `<thead><tr><th>Modelo</th><th class="n">R²</th><th class="n">Error típico</th><th class="n">Dentro de ±20 %</th></tr></thead><tbody>` +
+      filas.filter(f => f[1]).map(([n, x], i) => `<tr class="${i === 3 ? "destacada" : ""}"><td>${n}</td><td class="n">${num(x.R2_log, 3)}</td><td class="n">${num(x["MdAPE_%"], 1)} %</td><td class="n">${num(x["dentro_20_%"], 1)} %</td></tr>`).join("") + "</tbody>";
+    pintarCurva(m.historial_red);
+    $("#t-vectores").innerHTML = `<thead><tr><th>Representación</th><th class="n">Mismo segmento</th><th class="n">Mismo tipo</th><th class="n">Diferencia de precio</th><th class="n">Distancia</th></tr></thead><tbody>` +
+      m.vectores.map(v => `<tr class="${String(v.metodo).startsWith("híbrido") ? "destacada" : ""}"><td>${esc(NOMBRE_VEC[v.metodo] || v.metodo)}</td><td class="n">${num(v["mismo_segmento_%"], 1)} %</td><td class="n">${num(v["mismo_tipo_%"], 1)} %</td><td class="n">${num(v["dif_precio_mediana_%"], 1)} %</td><td class="n">${num(v.distancia_mediana_km, 1)} km</td></tr>`).join("") + "</tbody>";
+  } catch (err) { $("#v-como-funciona .pagina").insertAdjacentHTML("beforeend", `<div class="vacio"><h3>No se pudieron cargar las métricas</h3><p>${esc(err.message)}</p></div>`); }
+  $("#t-herr").innerHTML = `<thead><tr><th>Herramienta</th><th>Para qué se usó</th><th>Conceptos</th></tr></thead><tbody>` +
+    HERRAMIENTAS.map(h => `<tr><td><b>${h[0]}</b></td><td>${h[1]}</td><td>${h[2]}</td></tr>`).join("") + "</tbody>";
+}
+function pintarCurva(h) {
+  if (!h || !h.length) { $("#curva").innerHTML = '<div class="aviso">Aún no hay historial de entrenamiento.</div>'; return; }
+  const W = 560, H = 240, p = { l: 44, r: 12, t: 12, b: 30 };
+  const ys = h.flatMap(x => [x.rmse_train, x.rmse_val]), y0 = Math.min(...ys) * 0.95, y1 = Math.max(...ys) * 1.02, n = h.length;
+  const X = i => p.l + (i / (n - 1)) * (W - p.l - p.r), Y = v => p.t + (1 - (v - y0) / (y1 - y0)) * (H - p.t - p.b);
+  const linea = k => h.map((x, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(x[k]).toFixed(1)}`).join("");
+  const mejor = h.reduce((b, x, i) => x.rmse_val < h[b].rmse_val ? i : b, 0);
+  const marcas = [0, .25, .5, .75, 1].map(f => y0 + f * (y1 - y0));
+  $("#curva").innerHTML = `<svg class="curva" viewBox="0 0 ${W} ${H}" role="img" aria-label="Curva de aprendizaje: error de entrenamiento y validación por época">
+    ${marcas.map(v => `<line x1="${p.l}" x2="${W - p.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="#EDF1EF"/><text x="${p.l - 6}" y="${Y(v) + 4}" font-size="10.5" text-anchor="end" fill="#7C8994">${v.toFixed(2)}</text>`).join("")}
+    <line x1="${X(mejor)}" x2="${X(mejor)}" y1="${p.t}" y2="${H - p.b}" stroke="#F2B705" stroke-width="2" stroke-dasharray="4 4"/>
+    <text x="${X(mejor) + (mejor > n * 0.7 ? -5 : 5)}" y="${p.t + 12}" font-size="11" text-anchor="${mejor > n * 0.7 ? "end" : "start"}" fill="#16232E">mejor época: ${h[mejor].epoca}</text>
+    <path d="${linea("rmse_train")}" fill="none" stroke="#7C8994" stroke-width="2"/><path d="${linea("rmse_val")}" fill="none" stroke="#1E5B4F" stroke-width="2.5"/>
+    <text x="${(W + p.l) / 2}" y="${H - 6}" font-size="11" text-anchor="middle" fill="#7C8994">época</text></svg>
+    <div class="leyenda-curva"><span><i style="background:#7C8994"></i>Entrenamiento</span><span><i style="background:#1E5B4F"></i>Validación</span><span>Error: RMSE de log(precio)</span></div>`;
+}
+
+/* ===== Arranque =========================================================================== */
+(async function arrancar() {
+  sincronizar(); irA();
+  try {
+    const [res, unis] = await Promise.all([api("/api/resumen"), api("/api/universidades")]);
+    E.resumen = res; E.unis = unis;
+    const ops = unis.map(u => `<option value="${esc(u.sigla)}">${esc(u.nombre)}, ${esc(u.sede)}</option>`).join("");
+    $("#h-uni").innerHTML = ops; $("#f-uni").innerHTML = ops;
+    if (!unis.some(u => u.sigla === E.uni)) E.uni = unis[0]?.sigla;
+    $("#f-mun").innerHTML = res.municipios.map(m => `<label class="chip"><input type="checkbox" value="${esc(m)}">${esc(m)}</label>`).join("");
+    const fecha = res.fecha_datos ? new Date(res.fecha_datos + "T12:00:00").toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" }) : "";
+    $("#confianza").innerHTML = `<span><b>${num(res.viviendas)}</b>anuncios reales analizados</span><span><b>${res.municipios.length}</b>municipios del valle</span>
+      <span><b>${unis.length}</b>sedes universitarias</span>${res.modelo?.error_tipico_pct ? `<span><b>${num(res.modelo.error_tipico_pct, 1)} %</b>error típico del precio justo</span>` : ""}`;
+    $("#pie-datos").textContent = `Datos de anuncios del ${fecha}. Finca Raíz, Policía Nacional, DANE, Alcaldía de Medellín y OpenStreetMap.`;
+    sincronizar(); buscar();
+  } catch (err) {
+    $("#lista").innerHTML = `<div class="vacio"><h3>La API no responde</h3><p>Enciende el servidor con <code>uvicorn api.main:app --reload</code> y recarga la página.</p></div>`;
+  }
+})();
+</script>
+</body>
+</html>
