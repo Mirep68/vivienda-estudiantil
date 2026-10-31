@@ -43,3 +43,16 @@ SELECT c.nombre, count(*) AS viviendas
 FROM viviendas v
 JOIN comunas c ON ST_Within(v.geom, c.geom)
 GROUP BY c.nombre ORDER BY viviendas DESC;
+
+-- 7) Valoración: cuántas gangas / justas / caras hay por municipio
+SELECT v.municipio, a.clase_precio, count(*) AS viviendas
+FROM valoracion a JOIN viviendas v USING (id)
+GROUP BY v.municipio, a.clase_precio ORDER BY v.municipio, a.clase_precio;
+
+-- 8) El caso de estudio: gangas o precio justo, hasta $2.000.000, a menos de 2 km de la USB
+SELECT v.id, v.municipio, v.barrio, v.tipo_inmueble, v.precio, a.precio_justo, a.diferencia_pct,
+       a.clase_precio, a.segmento_nombre, round(v.dist_usb_km::numeric, 2) AS km_usb, v.url
+FROM viviendas v JOIN valoracion a USING (id)
+WHERE v.precio <= 2000000 AND v.dist_usb_km <= 2 AND a.clase_precio IN ('ganga', 'justo')
+ORDER BY a.diferencia_pct
+LIMIT 20;

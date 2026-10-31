@@ -19,6 +19,11 @@ DECISIONES
      inmobiliarias), para que una copia no quede en train y otra en test (fuga de datos).
   6. Todo lo que se "aprende" de los datos (medianas, categorías, medias) sale SOLO del train.
 
+CORRECCIÓN (v2): en pandas 3, .astype(str) deja los faltantes como NaN, y pd.factorize les da el
+código -1. Resultado: los ~1.560 anuncios con área, habitaciones o baños faltantes quedaban TODOS en
+un único "grupo de duplicados" y caían juntos en un solo conjunto. Ahora el faltante se escribe "NA"
+dentro de la clave, y se verifica que ningún grupo sea anormalmente grande.
+
 Ejecutar:  python -m src.models.preparar_datos
 """
 
@@ -37,6 +42,7 @@ SALIDA = PROCESSED / "modelo"
 SEMILLA = 42
 TOP_AMENIDADES = 30
 MIN_FRECUENCIA = 5
+MAX_TAM_GRUPO = 50     # un mismo inmueble rara vez se publica más de unas decenas de veces
 
 NUMERICAS = [
     "area_m2", "habitaciones", "banos", "parqueaderos", "piso", "estrato", "antiguedad_cod",
@@ -48,12 +54,18 @@ NUMERICAS = [
 CATEGORICAS = ["municipio", "tipo_inmueble", "comuna", "barrio_modelo", "estado"]
 
 
+def _texto(s: pd.Series) -> pd.Series:
+    """Convierte a texto escribiendo 'NA' en los faltantes (astype(str) en pandas 3 los deja como NaN)."""
+    return s.map(lambda v: "NA" if pd.isna(v) else str(v))
+
+
 def grupos_duplicados(df: pd.DataFrame) -> pd.Series:
     """Mismo inmueble = misma ubicación (~10 m), área, habitaciones y baños."""
-    clave = (df["lat"].round(4).astype(str) + "|" + df["lon"].round(4).astype(str) + "|" +
-             df["area_m2"].round(0).astype(str) + "|" + df["habitaciones"].astype(str) + "|" +
-             df["banos"].astype(str))
-    return pd.Series(pd.factorize(clave)[0], index=df.index)
+    clave = (_texto(df["lat"].round(4)) + "|" + _texto(df["lon"].round(4)) + "|" +
+             _texto(df["area_m2"].round(0)) + "|" + _texto(df["habitaciones"]) + "|" + _texto(df["banos"]))
+    codigos = pd.factorize(clave)[0]
+    assert (codigos >= 0).all(), "hay claves de duplicado vacías"
+    return pd.Series(codigos, index=df.index)
 
 
 def main() -> None:
@@ -83,6 +95,8 @@ def main() -> None:
     tam = df.groupby("grupo").size()
     print(f"\nPosibles duplicados: {int((tam > 1).sum()):,} grupos con 2+ anuncios "
           f"({int(tam[tam > 1].sum()):,} anuncios, {tam[tam > 1].sum() / len(df) * 100:.1f} %)")
+    print(f"Grupo más grande: {int(tam.max())} anuncios (debe ser pequeño; tope de alerta {MAX_TAM_GRUPO})")
+    assert tam.max() <= MAX_TAM_GRUPO, "hay un grupo de duplicados anormalmente grande: revisar la clave"
 
     g1 = GroupShuffleSplit(n_splits=1, test_size=0.30, random_state=SEMILLA)
     idx_train, idx_resto = next(g1.split(df, groups=df["grupo"]))
@@ -96,6 +110,9 @@ def main() -> None:
     print("Tamaños:", df["conjunto"].value_counts().to_dict())
     cruzados = df.groupby("grupo")["conjunto"].nunique().gt(1).sum()
     print(f"Grupos repartidos en más de un conjunto (debe ser 0): {int(cruzados)}")
+    falta_area = df["area_m2"].isna()
+    print("Anuncios SIN área por conjunto (deben repartirse ~70/15/15):",
+          df.loc[falta_area, "conjunto"].value_counts().to_dict())
 
     # --- Amenidades -> one-hot (vocabulario del TRAIN) -----------------------------------
     listas = df["amenidades"].fillna("").str.split("|")

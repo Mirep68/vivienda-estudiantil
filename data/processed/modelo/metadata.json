@@ -51,17 +51,17 @@
   "am_13": "Parqueadero Visitantes",
   "am_14": "Gimnasio",
   "am_15": "Portería / Recepción",
-  "am_16": "Parques cercanos",
-  "am_17": "Balcón",
+  "am_16": "Balcón",
+  "am_17": "Parques cercanos",
   "am_18": "Closet",
-  "am_19": "Vigilancia",
-  "am_20": "Circuito cerrado de TV",
+  "am_19": "Circuito cerrado de TV",
+  "am_20": "Vigilancia",
   "am_21": "En conjunto cerrado",
   "am_22": "Piscina",
   "am_23": "Barra estilo americano",
   "am_24": "Depósito / Bodega",
-  "am_25": "Cocina tipo Americano",
-  "am_26": "Sauna / Turco / Jacuzzi",
+  "am_25": "Sauna / Turco / Jacuzzi",
+  "am_26": "Cocina tipo Americano",
   "am_27": "Agua Caliente Central",
   "am_28": "Sobre vía principal",
   "am_29": "Estudio"
@@ -80,7 +80,6 @@
    "Caldas",
    "Copacabana",
    "Envigado",
-   "Girardota",
    "Itagüí",
    "La Estrella",
    "Medellín",
@@ -119,18 +118,17 @@
   ],
   "barrio_modelo": [
    "OTRO",
+   "Aguas Frías",
    "Alejandro Echavarría",
    "Alejandría",
    "Altamira",
    "Altavista",
    "Altos del Poblado",
    "Antonio Nariño",
-   "Aranjuez",
    "Asomadera No.1",
    "Asomadera No.2",
    "Asomadera No.3",
    "Astorga",
-   "Aures No.1",
    "Barrio Caicedo",
    "Barrio Colombia",
    "Barrio Colón",
@@ -144,6 +142,8 @@
    "Bello:cabanas",
    "Bello:cabanitas",
    "Bello:centro",
+   "Bello:el mirador",
+   "Bello:el rosario",
    "Bello:el trapiche",
    "Bello:fabricato",
    "Bello:hospital mental",
@@ -154,7 +154,6 @@
    "Bello:molinares",
    "Bello:niquia",
    "Bello:potrerito",
-   "Bello:rincon santo",
    "Bello:san gabriel",
    "Bello:san jose obrero",
    "Bello:santa ana",
@@ -164,12 +163,12 @@
    "Belén",
    "Bolivariana",
    "Bomboná No.1",
-   "Bomboná No.2",
    "Bosques de San Pablo",
    "Boston",
    "Buenos Aires",
    "Calasanz",
    "Calasanz Parte Alta",
+   "Caldas:caldas",
    "Campo Alegre",
    "Campo Amor",
    "Campo Valdés No.2",
@@ -177,6 +176,7 @@
    "Castilla",
    "Castropol",
    "Cataluña",
+   "Centro Administrativo",
    "Cerro Nutibara",
    "Copacabana:copacabana",
    "Copacabana:machado",
@@ -185,8 +185,6 @@
    "Cristo Rey",
    "Cuarta Brigada",
    "Cucaracho",
-   "Diego Echavarría",
-   "Doce de Octubre No.2",
    "El Castillo",
    "El Chagualo",
    "El Compromiso",
@@ -206,6 +204,7 @@
    "Enciso",
    "Envigado:",
    "Envigado:alcala",
+   "Envigado:alto de las flores",
    "Envigado:alto de misael",
    "Envigado:altos del escobero",
    "Envigado:andalucia",
@@ -231,6 +230,7 @@
    "Envigado:la inmaculada",
    "Envigado:la magnolia",
    "Envigado:la mina",
+   "Envigado:la orquidea",
    "Envigado:la paz",
    "Envigado:la sebastiana",
    "Envigado:las antillas",
@@ -240,6 +240,7 @@
    "Envigado:las flores",
    "Envigado:las palmas",
    "Envigado:las vegas",
+   "Envigado:llano grande",
    "Envigado:loma benedictinos",
    "Envigado:loma de las brujas",
    "Envigado:loma del barro",
@@ -254,7 +255,6 @@
    "Envigado:mesa",
    "Envigado:montessori",
    "Envigado:muga",
-   "Envigado:obrero",
    "Envigado:otraparte",
    "Envigado:palmas",
    "Envigado:pontevedra",
@@ -264,15 +264,15 @@
    "Envigado:san marcos",
    "Envigado:san rafael",
    "Envigado:senorial",
-   "Envigado:uribe angel",
+   "Envigado:suroriente",
    "Envigado:via las palmas",
    "Envigado:villagrande",
    "Envigado:zona centro",
    "Envigado:zuniga",
    "Estadio",
+   "Facultad de Minas",
    "Ferrini",
    "Florida Nueva",
-   "Fuente Clara",
    "Fátima",
    "Gerona",
    "Granada",
@@ -290,18 +290,17 @@
    "Itagüí:las vegas",
    "Itagüí:primavera",
    "Itagüí:san gabriel",
-   "Itagüí:san isidro",
+   "Itagüí:san jose",
    "Itagüí:santa catalina",
    "Itagüí:santa maria de los angeles",
    "Itagüí:santa maria la nueva",
    "Itagüí:santa maria no. 3",
    "Itagüí:simon bolivar",
    "Itagüí:suramerica",
-   "Itagüí:toledo",
    "Itagüí:villa paula",
    "Itagüí:viviendas del sur",
+   "Itagüí:yarumito",
    "Itagüí:zona industrial no. 1",
-   "Itagüí:zuniga",
    "Jesús Nazareno",
    "La Aguacatala",
    "La América",
@@ -324,14 +323,17 @@
    "La Frontera",
    "La Gloria",
    "La Hondonada",
+   "La Loma",
    "La Loma de Los Bernal",
+   "La Mansión",
    "La Milagrosa",
    "La Mota",
    "La Palma",
    "La Pilarica",
-   "La Pradera",
+   "La Verde",
    "Lalinde",
    "Las Acacias",
+   "Las Granjas",
    "Las Lomas No.1",
    "Las Lomas No.2",
    "Las Mercedes",
@@ -353,7 +355,6 @@
    "Manila",
    "Manrique Central No.1",
    "Manrique Central No.2",
-   "Manrique Oriental",
    "Miravalle",
    "NA",
    "Naranjal",
@@ -368,20 +369,19 @@
    "Robledo",
    "Rosales",
    "Sabaneta:",
+   "Sabaneta:aliadas del sur",
+   "Sabaneta:alto las flores",
    "Sabaneta:ancon sur",
    "Sabaneta:asdesillas",
    "Sabaneta:aves maria",
    "Sabaneta:betania",
-   "Sabaneta:calle del banco",
    "Sabaneta:calle larga",
    "Sabaneta:canaveralejo",
    "Sabaneta:el carmelo",
    "Sabaneta:el carmelo ii",
-   "Sabaneta:el poblado",
    "Sabaneta:entreamigos",
    "Sabaneta:envigado",
    "Sabaneta:holanda",
-   "Sabaneta:la cuenca",
    "Sabaneta:la doctora",
    "Sabaneta:la florida",
    "Sabaneta:las lomitas",
@@ -403,6 +403,7 @@
    "Sabaneta:santa ana",
    "Sabaneta:trapiche",
    "Sabaneta:tres esquinas",
+   "Sabaneta:vegas de la doctora",
    "Sabaneta:vegas de san jose",
    "Sabaneta:vereda san jose",
    "Sabaneta:villas del carmen",
@@ -412,7 +413,6 @@
    "San Bernardo",
    "San Diego",
    "San Germán",
-   "San Isidro",
    "San Javier No.1",
    "San Joaquín",
    "San José",
@@ -420,24 +420,24 @@
    "San Lucas",
    "San Miguel",
    "Santa Fé",
-   "Santa Inés",
    "Santa Lucía",
-   "Santa Margarita",
    "Santa María de Los Ángeles",
    "Santa Mónica",
    "Santa Teresita",
-   "Santo Domingo Savio No.1",
    "Simón Bolívar",
    "Sin Nombre",
    "Sucre",
    "Suramericana",
    "Tenche",
    "Trinidad",
+   "U.P.B",
    "Veinte de Julio",
+   "Versalles No.1",
    "Villa Carlota",
    "Villa Flora",
    "Villa Hermosa",
    "Villa Nueva",
+   "Área de Expansión Altavista",
    "Área de Expansión Belén Rincón",
    "Área de Expansión Pajarito",
    "Área de Expansión San Antonio de Prado",
@@ -457,113 +457,113 @@
   "habitaciones": 3.0,
   "banos": 2.0,
   "parqueaderos": 1.0,
-  "piso": 5.0,
+  "piso": 6.0,
   "estrato": 5.0,
   "antiguedad_cod": 3.0,
   "n_amenidades": 20.0,
-  "lat": 6.1966135734411605,
-  "lon": -75.5751004624735,
+  "lat": 6.1963694892945,
+  "lon": -75.5750253715,
   "seg_hurto_personas": 1000.8540032984058,
   "seg_hurto_residencias": 99.50545059342967,
   "seg_hurto_motos": 70.17386015926493,
   "seg_hurto_carros": 24.79719694601996,
   "seg_homicidios": 5.597562968548435,
   "dist_universidad_min_km": 1.28,
-  "dist_metro_km": 1.44,
+  "dist_metro_km": 1.43,
   "dist_parque_km": 0.45,
-  "servicios_500m": 3.0,
+  "servicios_500m": 2.0,
   "supermercados_500m": 1.0,
   "farmacias_500m": 1.0
  },
  "estandarizacion": {
   "area_m2": {
-   "media": 117.75974726350452,
-   "desv": 94.50997648423763
+   "media": 117.96305361516828,
+   "desv": 94.93194726480115
   },
   "habitaciones": {
-   "media": 2.679896769600427,
-   "desv": 0.9961697964507459
+   "media": 2.675405969336841,
+   "desv": 0.9946831920769231
   },
   "banos": {
-   "media": 2.5241612530034705,
-   "desv": 1.119865887386598
+   "media": 2.5166923704980495,
+   "desv": 1.1167980102801869
   },
   "parqueaderos": {
-   "media": 1.2720921954258253,
-   "desv": 1.0805488531754333
+   "media": 1.2590492606368502,
+   "desv": 1.0536002425946076
   },
   "piso": {
-   "media": 6.096511524428228,
-   "desv": 4.332032431078361
+   "media": 6.702803229610813,
+   "desv": 4.200577603201443
   },
   "estrato": {
-   "media": 4.829313873809736,
-   "desv": 1.0438106601119777
+   "media": 4.8301732740633225,
+   "desv": 1.0440984012290193
   },
   "antiguedad_cod": {
-   "media": 2.8124499421553795,
-   "desv": 1.0034975658505818
+   "media": 2.8102603646920077,
+   "desv": 1.008948825343382
   },
   "n_amenidades": {
-   "media": 19.577556287265285,
-   "desv": 11.757936410488194
+   "media": 19.687471650185973,
+   "desv": 11.835898202632883
   },
   "lat": {
-   "media": 6.201128874808118,
-   "desv": 0.04223280707849694
+   "media": 6.200928425301189,
+   "desv": 0.04221624182951982
   },
   "lon": {
-   "media": -75.58157057238581,
-   "desv": 0.023349436208032037
+   "media": -75.5816519783134,
+   "desv": 0.02333638056085256
   },
   "seg_hurto_personas": {
-   "media": 1839.617468809854,
-   "desv": 1716.5366337379335
+   "media": 1838.97788776036,
+   "desv": 1725.5453203923698
   },
   "seg_hurto_residencias": {
-   "media": 126.23272983197957,
-   "desv": 72.14132038695858
+   "media": 125.8548050905981,
+   "desv": 72.05379475386299
   },
   "seg_hurto_motos": {
-   "media": 124.49012799962132,
-   "desv": 141.23121439812252
+   "media": 124.604224322712,
+   "desv": 142.10516988122885
   },
   "seg_hurto_carros": {
-   "media": 40.05189436035755,
-   "desv": 37.781203261870246
+   "media": 39.87287436697702,
+   "desv": 37.57838450744148
   },
   "seg_homicidios": {
-   "media": 9.01530866369229,
-   "desv": 14.116872114622462
+   "media": 9.036088999470628,
+   "desv": 14.235769524937174
   },
   "dist_universidad_min_km": {
-   "media": 1.442155379549702,
-   "desv": 0.8574337316467369
+   "media": 1.440396897396353,
+   "desv": 0.8497628457110306
   },
   "dist_metro_km": {
-   "media": 1.6708583251757587,
-   "desv": 1.1065808483714326
+   "media": 1.6632804136804862,
+   "desv": 1.0927478698356197
   },
   "dist_parque_km": {
-   "media": 0.6314376612974993,
-   "desv": 0.6320045165557686
+   "media": 0.6277170461761771,
+   "desv": 0.6136865906335509
   },
   "servicios_500m": {
-   "media": 4.300925513927205,
-   "desv": 4.849406804047922
+   "media": 4.252834981402522,
+   "desv": 4.832972005756082
   },
   "supermercados_500m": {
-   "media": 2.2119337901575156,
-   "desv": 2.67098135252769
+   "media": 2.1866551755420485,
+   "desv": 2.6759932027845776
   },
   "farmacias_500m": {
-   "media": 2.0889917237696896,
-   "desv": 2.8811582973758094
+   "media": 2.0661798058604735,
+   "desv": 2.8657925221334604
   }
  },
  "tamanos": {
-  "train": 22474,
-  "val": 4541,
-  "test": 4482
+  "train": 22046,
+  "test": 4739,
+  "val": 4712
  }
 }

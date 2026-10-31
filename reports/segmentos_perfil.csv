@@ -1,0 +1,6 @@
+﻿segmento,nombre,viviendas,pct,precio_mediano,area_mediana,habitaciones,estrato,km_universidad,km_metro,indice_seguridad,tipo_principal,municipio_principal,pct_ganga
+2,"S2: Apartamento mediano, precio económico",5463,17.34,2600000.0,65.0,2.0,4.0,2.08,1.23,60.8,Apartamento,Medellín,15.82
+3,"S3: Apartamento mediano, precio económico, cerca de universidad, seguridad alta",5299,16.82,3100000.0,75.0,3.0,4.0,0.72,1.28,72.5,Apartamento,Sabaneta,13.72
+4,"S4: Apartamento mediano, precio medio, cerca de universidad, seguridad baja",3565,11.32,3900000.0,88.0,3.0,5.0,0.89,0.86,18.3,Apartamento,Medellín,19.02
+0,"S0: Apartamento amplio, precio medio",11512,36.55,5000000.0,90.0,2.0,6.0,1.37,1.69,57.1,Apartamento,Medellín,16.12
+1,"S1: Casa amplio, precio alto",5658,17.96,11000000.0,230.0,3.0,6.0,1.25,2.09,57.1,Casa,Medellín,18.98

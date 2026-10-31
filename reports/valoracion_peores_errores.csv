@@ -1,0 +1,51 @@
+﻿id,precio,area_m2,tipo_inmueble,municipio,grupo,precio_justo,veces,particion,tam_grupo,url,barrio
+193881540,35000000.0,88.0,Casa,Medellín,24075,3264000.0,10.7,1,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-la-america-medellin/193881540,La america
+192132379,50000000.0,88.0,Casa,Bello,756,5572000.0,9.0,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-centro-bello/192132379,Centro
+192796994,55120000.0,88.0,Casa,Medellín,23817,9350000.0,5.9,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-la-candelaria-medellin/192796994,La candelaria
+192815663,88000000.0,88.0,Casa,Medellín,23400,17714000.0,5.0,2,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-prado-medellin/192815663,Prado
+194438207,7000000.0,88.0,Casa,Medellín,23478,31738000.0,4.5,1,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-altos-del-poblado-medellin/194438207,Altos del poblado
+7454261,35000000.0,88.0,Casa,Medellín,24015,7759000.0,4.5,1,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-laureles-medellin/7454261,Laureles
+193948842,16000000.0,88.0,Casa,Medellín,23137,69808000.0,4.4,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-las-palmas-medellin/193948842,Las palmas
+191272361,550000.0,88.0,Habitación,Medellín,24126,2252000.0,4.1,3,1,https://www.fincaraiz.com.co/habitacion-en-arriendo-en-laureles-medellin/191272361,Laureles
+11011577,37300000.0,932.0,Casa,Medellín,23779,9143000.0,4.1,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-prado-medellin/11011577,Prado
+194169591,5500000.0,45.0,Apartamento,Medellín,20420,1387000.0,4.0,5,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-medellin/194169591,Medellín
+192695748,20000000.0,88.0,Casa,Medellín,23059,5066000.0,3.9,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-prado-medellin/192695748,Prado
+192992695,7000000.0,88.0,Casa,Medellín,24066,27432000.0,3.9,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-prado-medellin/192992695,Prado
+193711712,1000000.0,100.0,Casa,Medellín,24086,3876000.0,3.9,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-aranjuez-medellin/193711712,Aranjuez
+193459032,85000000.0,88.0,Casa,Medellín,22070,22792000.0,3.7,1,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-prado-medellin/193459032,Prado
+194218998,45000000.0,88.0,Apartamento,Medellín,15371,12118000.0,3.7,4,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-laureles-medellin/194218998,Laureles
+194265754,40000000.0,88.0,Casa,Medellín,23322,10854000.0,3.7,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-laureles-medellin/194265754,Laureles
+193864997,450000.0,18.0,Apartamento,Copacabana,793,1628000.0,3.6,5,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-copacabana/193864997,Copacabana
+194001923,15000000.0,150.0,Casa,Medellín,22588,4356000.0,3.4,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-medellin/194001923,Medellín
+191867504,56000000.0,650.0,Casa,Medellín,23683,16487000.0,3.4,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/191867504,El Poblado
+192608928,40000000.0,88.0,Casa,Medellín,22481,11870000.0,3.4,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-las-palmas-medellin/192608928,Las palmas
+191805114,21500000.0,320.0,Casa,Sabaneta,26615,6493000.0,3.3,4,2,https://www.fincaraiz.com.co/casa-en-arriendo-en-las-lomitas-sabaneta/191805114,Las Lomitas
+194265424,50000000.0,250.0,Casa,Medellín,23349,15121000.0,3.3,2,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/194265424,El Poblado
+194365503,6000000.0,480.0,Casa,Medellín,6172,19468000.0,3.2,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/194365503,El Poblado
+193930790,65000000.0,88.0,Casa,Medellín,22339,20047000.0,3.2,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-altos-del-poblado-medellin/193930790,Altos del poblado
+193991071,43000000.0,264.0,Apartamento,Medellín,15373,13492000.0,3.2,5,2,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-san-lucas-medellin/193991071,San Lucas
+192306165,60000000.0,88.0,Casa,Medellín,22624,19039000.0,3.2,2,2,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/192306165,El Poblado
+194084236,4000000.0,88.0,Casa,Medellín,22679,12397000.0,3.1,4,2,https://www.fincaraiz.com.co/casa-en-arriendo-en-san-cristobal-medellin/194084236,San cristobal
+193977583,8000000.0,88.0,Casa,La Estrella,8222,2591000.0,3.1,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-chile-la-estrella/193977583,Chile
+194265704,46000000.0,88.0,Casa,Envigado,6296,15185000.0,3.0,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-envigado/194265704,Envigado
+193487185,4000000.0,280.0,Casa,Medellín,23429,12018000.0,3.0,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-la-candelaria-medellin/193487185,La candelaria
+194271346,16500000.0,88.0,Casa,Envigado,6654,5512000.0,3.0,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-la-mina-envigado/194271346,La mina
+191531376,39000000.0,88.0,Casa,Envigado,5846,13135000.0,3.0,2,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-loma-del-escobero-envigado/191531376,Loma del Escobero
+192595215,35000000.0,88.0,Casa,Medellín,21876,11874000.0,2.9,2,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/192595215,El Poblado
+194266633,90000000.0,88.0,Casa,Medellín,22695,30742000.0,2.9,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-altos-del-poblado-medellin/194266633,Altos del poblado
+11016519,35000000.0,550.0,Casa,Medellín,23194,12077000.0,2.9,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-laureles-medellin/11016519,Laureles
+192624506,17100000.0,126.0,Apartamento,Medellín,15596,5958000.0,2.9,5,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-el-poblado-medellin/192624506,El Poblado
+194266753,30000000.0,205.0,Apartamento,Medellín,15391,10464000.0,2.9,1,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-el-poblado-medellin/194266753,El Poblado
+192501351,27000000.0,88.0,Casa,Medellín,23640,9501000.0,2.8,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/192501351,El Poblado
+194214909,16500000.0,256.0,Casa,Medellín,22736,5811000.0,2.8,1,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-belen-medellin/194214909,Belén
+194266620,18000000.0,150.0,Apartamento,Medellín,15557,6396000.0,2.8,3,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-medellin/194266620,Medellín
+10395741,47000000.0,88.0,Casa,Envigado,6700,16731000.0,2.8,1,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-loma-del-chocho-envigado/10395741,Loma del Chocho
+194415494,30000000.0,88.0,Casa,Medellín,5889,10719000.0,2.8,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-poblado-medellin/194415494,El Poblado
+193988370,25000000.0,400.0,Casa,Medellín,21926,8982000.0,2.8,3,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-medellin/193988370,Medellín
+193849607,16000000.0,160.0,Apartamento,Medellín,15713,5769000.0,2.8,2,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-patio-bonito-medellin/193849607,Patio bonito
+193583983,19500000.0,350.0,Casa,Medellín,23570,7069000.0,2.8,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-llano-grande-medellin/193583983,Llano Grande
+7121405,30000000.0,391.0,Casa,Medellín,23930,11040000.0,2.7,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-el-pinal-medellin/7121405,El pinal
+193122874,31575400.0,162.59,Apartamento,Medellín,15387,11696000.0,2.7,3,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-provenza-medellin/193122874,Provenza
+192378775,12000000.0,88.0,Casa,Sabaneta,26579,4530000.0,2.6,5,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-las-lomitas-sabaneta/192378775,Las Lomitas
+193848521,5600000.0,88.0,Casa,Medellín,24069,2133000.0,2.6,4,1,https://www.fincaraiz.com.co/casa-en-arriendo-en-aranjuez-medellin/193848521,Aranjuez
+194266630,22000000.0,194.0,Apartamento,Medellín,15464,8381000.0,2.6,4,1,https://www.fincaraiz.com.co/apartamento-en-arriendo-en-laureles-medellin/194266630,Laureles

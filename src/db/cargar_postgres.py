@@ -8,6 +8,7 @@ Paso 6: cargar todos los datos del proyecto a PostgreSQL (con PostGIS si está i
     data/reference/comunas.geojson           -> tabla comunas            (polígonos)
     data/reference/barrios.geojson           -> tabla barrios            (polígonos)
     data/reference/poblacion_comunas.csv     -> tabla poblacion_comunas
+    data/processed/valoracion_<fecha>.csv    -> tabla valoracion         (precio justo, clase, segmento)
     (registro de cada ejecución)             -> tabla cargas
 
 ¿POR QUÉ UNA BASE DE DATOS SI YA TENEMOS CSV?
@@ -48,7 +49,7 @@ PROCESSED = RAIZ / "data" / "processed"
 REF = RAIZ / "data" / "reference"
 REPORTS = RAIZ / "reports"
 
-TABLAS = ["viviendas", "universidades", "seguridad_unidades", "municipios", "comunas", "barrios",
+TABLAS = ["valoracion", "viviendas", "universidades", "seguridad_unidades", "municipios", "comunas", "barrios",
           "poblacion_comunas"]
 
 
@@ -186,6 +187,18 @@ def main() -> None:
     subir_capa(motor, REF / "barrios.geojson", "barrios", postgis)
     subir(motor, pd.read_csv(REF / "poblacion_comunas.csv", encoding="utf-8-sig"),
           "poblacion_comunas", "poblacion_comunas.csv")
+
+    # 5) Valoración (precio justo, ganga/justo/caro, segmento), si ya se generó con src.models.valoracion
+    archivos_val = sorted(PROCESSED.glob("valoracion_*.csv"))
+    if archivos_val:
+        val = pd.read_csv(archivos_val[-1], dtype={"id": str}, encoding="utf-8-sig")
+        subir(motor, val, "valoracion", archivos_val[-1].name, clave="id")
+        with motor.begin() as c:
+            c.execute(text("""ALTER TABLE valoracion ADD CONSTRAINT valoracion_vivienda_fk
+                              FOREIGN KEY (id) REFERENCES viviendas (id)"""))
+            c.execute(text("CREATE INDEX valoracion_clase_idx ON valoracion (clase_precio)"))
+    else:
+        print("  (valoracion: aún no existe el archivo; corre primero python -m src.models.valoracion)")
 
     # --- Geometría e índices para las búsquedas de la web -----------------------------------
     if postgis:
