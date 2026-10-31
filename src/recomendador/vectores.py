@@ -53,6 +53,12 @@ def normalizar(M: np.ndarray) -> np.ndarray:
     return M / np.where(n == 0, 1, n)
 
 
+def zscore(M: np.ndarray) -> np.ndarray:
+    """Centra y escala cada columna; quita las columnas constantes."""
+    M = M[:, M.std(axis=0) > 1e-6]
+    return (M - M.mean(axis=0)) / M.std(axis=0)
+
+
 def km(lat1, lon1, lat2, lon2):
     """Distancia haversine en km (vectorizada)."""
     p = np.pi / 180
@@ -94,10 +100,28 @@ def main() -> None:
 
     x_num, x_cat = a_tensores(todo, num, cat, meta, dispositivo)
     V = representacion(modelo, x_num, x_cat).astype("float32")
-    activas = (V > 0).any(axis=0).sum()
-    print(f"Vectores: {V.shape[0]:,} viviendas x {V.shape[1]} dimensiones "
-          f"({activas} dimensiones activas; las demás son neuronas ReLU que nunca se encienden)")
-    np.savez_compressed(MODELOS / "vectores_red.npz", ids=todo["id"].to_numpy(), V=V)
+    activas = V.std(axis=0) > 1e-6
+    print(f"Vectores: {V.shape[0]:,} viviendas x {V.shape[1]} dimensiones ({int(activas.sum())} activas)")
+    # ¿Por qué estandarizar? Tras la ReLU todos los vectores son positivos y apuntan casi en la misma
+    # dirección (coseno ~1.0 entre casi cualquier par): la similitud coseno "cruda" casi no distingue.
+    # Restar la media y dividir por la desviación de cada dimensión (z-score) centra la nube y hace
+    # que el coseno mida en qué se DIFERENCIA cada vivienda del promedio.
+    X_crudo = x_num.cpu().numpy()                                    # las mismas entradas, sin la red
+    variantes = {
+        "red sin estandarizar": V,
+        "red estandarizada": zscore(V[:, activas]),
+        # Entradas tal como las recibe la red: continuas ya estandarizadas con el train y binarias 0/1.
+        # (z-score también a las binarias infla el peso de amenidades raras: se probó y empeora)
+        "crudo (variables sin red)": X_crudo[:, X_crudo.std(axis=0) > 1e-6],
+    }
+    Zr, Zc = variantes["red estandarizada"], variantes["crudo (variables sin red)"]
+    # Híbrido: cada bloque pesa lo mismo en el coseno (se divide por la raíz de su número de columnas)
+    variantes["híbrido red + crudo"] = np.hstack([Zr / np.sqrt(Zr.shape[1]), Zc / np.sqrt(Zc.shape[1])])
+    rng0 = np.random.default_rng(SEMILLA)
+    par = rng0.choice(len(V), (2000, 2))
+    cos = (normalizar(V)[par[:, 0]] * normalizar(V)[par[:, 1]]).sum(axis=1)
+    print(f"Coseno entre pares AL AZAR con el vector sin estandarizar: mediana {np.median(cos):.3f} "
+          "(cerca de 1 = el coseno casi no distingue)")
 
     # --- Evaluación --------------------------------------------------------------------------
     viv = pd.read_csv(PROCESSED / meta["fuente"], dtype={"id": str}, encoding="utf-8-sig", low_memory=False)
@@ -108,18 +132,25 @@ def main() -> None:
     info = (todo[["id", "precio", "tipo_inmueble"]]
             .merge(viv[["id", "lat", "lon", "grupo"]], on="id", how="left")
             .merge(seg, on="id", how="left"))
-    X_crudo = x_num.cpu().numpy()                                    # las mismas entradas, sin la red
     rng = np.random.default_rng(SEMILLA)
     muestra = rng.choice(len(info), N_MUESTRA, replace=False)
-    filas = [evaluar("red (vector aprendido)", V, info, muestra, rng),
-             evaluar("crudo (variables sin red)", X_crudo, info, muestra, rng),
-             evaluar("azar", None, info, muestra, rng)]
+    filas = [evaluar(n, M, info, muestra, rng) for n, M in variantes.items()]
+    filas.append(evaluar("azar", None, info, muestra, rng))
     res = pd.DataFrame(filas).set_index("metodo")
     print(f"\n¿Las {K_VECINAS} vecinas más parecidas se parecen de verdad? (promedio sobre {N_MUESTRA} viviendas)")
     print(res.round(1).to_string())
-    res.to_csv(REPORTES / "evaluacion_vectores.csv", encoding="utf-8-sig")
-    print(f"\nGuardado: models/vectores_red.npz, reports/evaluacion_vectores.csv")
 
+    # Elección: el mejor rango promedio en las 4 métricas (sin contar el azar)
+    r = res.drop(index="azar")
+    rangos = pd.concat([r[["mismo_segmento_%", "mismo_tipo_%"]].rank(ascending=False),
+                        r[["dif_precio_mediana_%", "distancia_mediana_km"]].rank(ascending=True)], axis=1)
+    res["rango_promedio"] = rangos.mean(axis=1)
+    elegido = res["rango_promedio"].idxmin()
+    print(f"\nRepresentación elegida para 'más como esta' (mejor rango promedio): {elegido}")
+    np.savez_compressed(MODELOS / "vectores_red.npz", ids=todo["id"].to_numpy(),
+                        V=variantes[elegido].astype("float32"), metodo=elegido)
+    res.to_csv(REPORTES / "evaluacion_vectores.csv", encoding="utf-8-sig")
+    print("Guardado: models/vectores_red.npz, reports/evaluacion_vectores.csv")
 
 if __name__ == "__main__":
     main()

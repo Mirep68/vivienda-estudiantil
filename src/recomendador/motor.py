@@ -93,6 +93,7 @@ def cargar_datos() -> pd.DataFrame:
 
 def cargar_vectores() -> tuple[np.ndarray, dict]:
     z = np.load(MODELOS / "vectores_red.npz", allow_pickle=True)
+    print(f"Vectores de contenido: {z['V'].shape} | representación: {z['metodo'] if 'metodo' in z else 'red'}")
     V = z["V"] / np.maximum(np.linalg.norm(z["V"], axis=1, keepdims=True), 1e-9)
     return V, {i: k for k, i in enumerate(z["ids"].astype(str))}
 
